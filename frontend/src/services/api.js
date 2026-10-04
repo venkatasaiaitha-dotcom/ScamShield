@@ -1,4 +1,4 @@
-const API_BASE = '/api';
+const API_BASE = (import.meta.env.VITE_API_BASE_URL ? import.meta.env.VITE_API_BASE_URL.replace(/\/$/, '') : '') + '/api';
 
 let memoryToken = null;
 
@@ -275,12 +275,22 @@ export function createWebSocketClient(onMessage, onStatusChange, token = null) {
   let heartbeatTimer = null;
   let isClosing = false;
 
-  const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-  const host = window.location.host;
+  const envBase = import.meta.env.VITE_API_BASE_URL;
+  let wsUrl;
   const currentToken = token || memoryToken;
-  const wsUrl = currentToken
-    ? `${protocol}//${host}/ws?token=${encodeURIComponent(currentToken)}`
-    : `${protocol}//${host}/ws`;
+  if (envBase && envBase.startsWith('http')) {
+    const wsProto = envBase.startsWith('https') ? 'wss:' : 'ws:';
+    const cleanHost = envBase.replace(/^https?:\/\//, '').replace(/\/api\/?$/, '').replace(/\/$/, '');
+    wsUrl = currentToken
+      ? `${wsProto}//${cleanHost}/ws?token=${encodeURIComponent(currentToken)}`
+      : `${wsProto}//${cleanHost}/ws`;
+  } else {
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const host = window.location.host;
+    wsUrl = currentToken
+      ? `${protocol}//${host}/ws?token=${encodeURIComponent(currentToken)}`
+      : `${protocol}//${host}/ws`;
+  }
 
   function connect() {
     if (isClosing) return;
