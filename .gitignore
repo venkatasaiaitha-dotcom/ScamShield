@@ -1,0 +1,29 @@
+# Environment and secrets
+.env
+*.env
+.jwt_secret
+
+# Databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Python cache & virtual environments
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+
+# Node & Frontend builds
+node_modules/
+dist/
+build/
+.vite-temp/
+
+# IDE & OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

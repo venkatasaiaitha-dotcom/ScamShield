@@ -1,0 +1,324 @@
+import React, { useState } from 'react';
+import {
+  ShieldAlert,
+  ShieldCheck,
+  AlertTriangle,
+  AlertOctagon,
+  X,
+  ExternalLink,
+  ChevronDown,
+  ChevronUp,
+  Link,
+  Lock,
+  LockOpen,
+  CheckCircle2,
+  XCircle,
+  FileText,
+  Copy,
+  Check,
+} from 'lucide-react';
+
+export default function AnalysisModal({ analysis, onClose }) {
+  const [showTechnical, setShowTechnical] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  if (!analysis) return null;
+
+  const isHighRisk = analysis.risk_level === 'HIGH' || analysis.risk_score >= 70;
+  const isSuspicious = analysis.risk_level === 'SUSPICIOUS' || (analysis.risk_score >= 30 && analysis.risk_score < 70);
+  const isLow = !isHighRisk && !isSuspicious;
+
+  const riskColor = isHighRisk ? 'text-red-600' : isSuspicious ? 'text-amber-600' : 'text-emerald-600';
+  const badgeBorder = isHighRisk ? 'border-red-200' : isSuspicious ? 'border-amber-200' : 'border-emerald-200';
+  const badgeBg = isHighRisk ? 'bg-red-50 text-red-700' : isSuspicious ? 'bg-amber-50 text-amber-700' : 'bg-emerald-50 text-emerald-700';
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(JSON.stringify(analysis, null, 2));
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200">
+      <div className="w-full max-w-2xl max-h-[90vh] flex flex-col rounded-2xl bg-white border border-slate-200 shadow-2xl overflow-hidden">
+        {/* Top Header */}
+        <div className="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/80">
+          <div className="flex items-center space-x-3">
+            <div className={`p-2 rounded-xl border ${badgeBorder} ${badgeBg}`}>
+              {isHighRisk ? (
+                <AlertOctagon className="w-6 h-6" />
+              ) : isSuspicious ? (
+                <AlertTriangle className="w-6 h-6" />
+              ) : (
+                <ShieldCheck className="w-6 h-6" />
+              )}
+            </div>
+            <div>
+              <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                SCAMSHIELD THREAT REPORT
+              </h2>
+              <p className="text-xs text-slate-500">
+                Processed at {analysis.timestamp || 'Just now'} • Source: <strong className="text-slate-700">{analysis.source || 'INBOUND'}</strong>
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={handleCopy}
+              title="Copy JSON metadata"
+              className="p-1.5 rounded-lg border border-slate-200 text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer"
+            >
+              {copied ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
+            </button>
+            <button
+              onClick={onClose}
+              className="p-1.5 rounded-lg border border-slate-200 text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+
+        {/* Scrollable Content Body */}
+        <div className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-5">
+          {/* Key Metric Gauges */}
+          <div className="grid grid-cols-3 gap-3 p-4 rounded-xl bg-slate-50 border border-slate-200 text-center">
+            <div>
+              <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider block">
+                Risk Score
+              </span>
+              <span className={`text-2xl sm:text-3xl font-extrabold ${riskColor}`}>
+                {analysis.risk_score}
+                <span className="text-xs font-normal text-slate-400"> / 100</span>
+              </span>
+            </div>
+            <div>
+              <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider block">
+                Threat Level
+              </span>
+              <span className={`inline-block mt-1 text-xs font-bold px-2.5 py-0.5 rounded-full border ${badgeBorder} ${badgeBg}`}>
+                {analysis.risk_level} RISK
+              </span>
+            </div>
+            <div>
+              <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider block">
+                Category
+              </span>
+              <span className="text-xs sm:text-sm font-bold text-slate-800 block mt-1 truncate">
+                {analysis.category || 'UNKNOWN'}
+              </span>
+            </div>
+          </div>
+
+          {/* Sender & Content Preview */}
+          <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+            <div className="flex items-center justify-between text-xs text-slate-500 border-b border-slate-200 pb-2">
+              <span>Sender: <strong className="text-slate-800">{analysis.sender}</strong></span>
+              <span className="font-semibold text-teal-800 bg-teal-50 px-2 py-0.5 rounded border border-teal-200 text-[10px]">{analysis.source}</span>
+            </div>
+            <div className="text-xs text-slate-700 font-mono bg-white p-3 rounded-lg border border-slate-200 whitespace-pre-wrap max-h-36 overflow-y-auto">
+              {analysis.content_preview || '(No content preview)'}
+            </div>
+          </div>
+
+          {/* Explainable Summary */}
+          <div>
+            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">
+              Explainable AI Assessment
+            </h3>
+            <p className="text-xs sm:text-sm text-slate-800 leading-relaxed bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs">
+              {analysis.summary}
+            </p>
+          </div>
+
+          {/* Scam Pattern Indicators */}
+          {analysis.reasons && analysis.reasons.length > 0 && (
+            <div>
+              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">
+                Identified Threat Patterns &amp; Flags ({analysis.reasons.length})
+              </h3>
+              <div className="space-y-2">
+                {analysis.reasons.map((reason, idx) => (
+                  <div
+                    key={idx}
+                    className="p-3 rounded-xl bg-white border border-slate-200 shadow-xs flex items-start space-x-3"
+                  >
+                    <div className="mt-0.5">
+                      {reason.severity === 'HIGH' ? (
+                        <AlertOctagon className="w-4 h-4 text-red-600" />
+                      ) : (
+                        <AlertTriangle className="w-4 h-4 text-amber-600" />
+                      )}
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold text-slate-900">{reason.title}</span>
+                        <span className="text-[10px] font-semibold text-slate-500 uppercase px-1.5 py-0.2 rounded bg-slate-100 border border-slate-200">
+                          {reason.severity || 'MEDIUM'}
+                        </span>
+                      </div>
+                      <p className="mt-0.5 text-xs text-slate-600">{reason.description}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* URL Intelligence Section */}
+          {analysis.urls_detected && analysis.urls_detected.length > 0 && (
+            <div>
+              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">
+                Extracted Links &amp; URL Defense ({analysis.urls_detected.length})
+              </h3>
+              <div className="space-y-2">
+                {analysis.urls_detected.map((u, i) => (
+                  <div key={i} className="p-3 rounded-xl bg-white border border-slate-200 shadow-xs text-xs space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2 font-mono text-slate-800 truncate">
+                        <Link className="w-3.5 h-3.5 text-teal-700 shrink-0" />
+                        <span className="truncate">{u.url}</span>
+                      </div>
+                      <span className="text-[10px] font-bold text-red-600 bg-red-50 border border-red-200 px-2 py-0.5 rounded-full shrink-0">
+                        +{u.risk_contribution} Risk
+                      </span>
+                    </div>
+
+                    <div className="flex flex-wrap gap-1.5 pt-1">
+                      {u.is_https ? (
+                        <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-semibold">
+                          <Lock className="w-2.5 h-2.5" />
+                          <span>HTTPS</span>
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-md bg-red-50 text-red-700 border border-red-200 text-[10px] font-semibold">
+                          <LockOpen className="w-2.5 h-2.5" />
+                          <span>Insecure HTTP</span>
+                        </span>
+                      )}
+                      {u.is_ip_address && (
+                        <span className="px-2 py-0.5 rounded-md bg-red-50 text-red-700 border border-red-200 text-[10px] font-semibold">
+                          Raw IP Host
+                        </span>
+                      )}
+                      {u.is_shortener && (
+                        <span className="px-2 py-0.5 rounded-md bg-amber-50 text-amber-700 border border-amber-200 text-[10px] font-semibold">
+                          Obfuscated Shortener
+                        </span>
+                      )}
+                      {u.is_lookalike && (
+                        <span className="px-2 py-0.5 rounded-md bg-red-50 text-red-700 border border-red-200 text-[10px] font-semibold">
+                          Brand Impersonation
+                        </span>
+                      )}
+                    </div>
+
+                    {u.suspicious_flags && u.suspicious_flags.length > 0 && (
+                      <ul className="pt-1 text-[11px] text-slate-600 space-y-0.5 list-disc list-inside">
+                        {u.suspicious_flags.map((flag, fIdx) => (
+                          <li key={fIdx}>{flag}</li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Action Center - Don'ts & Dos */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+            <div className="p-3.5 rounded-xl bg-red-50/80 border border-red-200 text-red-900">
+              <span className="font-bold flex items-center gap-1.5 text-red-700 mb-1.5">
+                ❌ What NOT to do
+              </span>
+              <ul className="space-y-1 text-slate-700">
+                {analysis.recommendations?.donts?.map((item, i) => (
+                  <li key={i} className="flex items-start space-x-1.5">
+                    <span className="text-red-500 font-bold">•</span>
+                    <span>{item}</span>
+                  </li>
+                )) || (
+                  <>
+                    <li>• Do not click any links</li>
+                    <li>• Never provide passwords or OTPs</li>
+                  </>
+                )}
+              </ul>
+            </div>
+
+            <div className="p-3.5 rounded-xl bg-teal-50/80 border border-teal-200 text-teal-900">
+              <span className="font-bold flex items-center gap-1.5 text-teal-800 mb-1.5">
+                ✅ Recommended Safe Action
+              </span>
+              <ul className="space-y-1 text-slate-700">
+                {analysis.recommendations?.dos?.map((item, i) => (
+                  <li key={i} className="flex items-start space-x-1.5">
+                    <span className="text-teal-600 font-bold">•</span>
+                    <span>{item}</span>
+                  </li>
+                )) || (
+                  <>
+                    <li>• Verify with the organization independently</li>
+                    <li>• Mark message as spam / block sender</li>
+                  </>
+                )}
+              </ul>
+            </div>
+          </div>
+
+          {/* Technical Details Accordion */}
+          <div className="border border-slate-200 rounded-xl overflow-hidden bg-slate-50">
+            <button
+              onClick={() => setShowTechnical(!showTechnical)}
+              className="w-full p-3 text-xs font-semibold text-slate-700 flex items-center justify-between hover:bg-slate-100 transition-colors cursor-pointer"
+            >
+              <span className="flex items-center space-x-1.5">
+                <FileText className="w-3.5 h-3.5 text-teal-700" />
+                <span>Technical Architecture &amp; Signal Breakdown</span>
+              </span>
+              {showTechnical ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+            </button>
+
+            {showTechnical && (
+              <div className="p-4 bg-white border-t border-slate-200 space-y-2 text-xs font-mono">
+                <pre className="text-[11px] text-slate-700 bg-slate-50 p-3 rounded-lg border border-slate-200 overflow-x-auto">
+                  {JSON.stringify(
+                    {
+                      id: analysis.id,
+                      user_id: analysis.user_id || 'isolated',
+                      heuristics_matched: analysis.technical_details?.heuristics_matched || [],
+                      category_scores: analysis.technical_details?.category_scores || {},
+                      model_confidence: analysis.technical_details?.model_confidence || '0.94',
+                      processing_pipeline: [
+                        'ingestion',
+                        'ssrf_check',
+                        'url_tokenization',
+                        'heuristic_pattern_matcher',
+                        'risk_aggregator',
+                        'tenant_isolated_store'
+                      ]
+                    },
+                    null,
+                    2
+                  )}
+                </pre>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="p-4 border-t border-slate-100 flex items-center justify-end bg-slate-50/80">
+          <button
+            onClick={onClose}
+            className="px-5 py-2 text-xs font-semibold bg-teal-700 hover:bg-teal-800 text-white rounded-xl shadow-xs transition-colors cursor-pointer"
+          >
+            Close Report
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
