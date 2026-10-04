@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Settings,
   Shield,
@@ -27,9 +27,19 @@ export default function SettingsView({
   onThemeChange,
 }) {
   const [formData, setFormData] = useState({
-    appearance: 'light',
+    appearance: localStorage.getItem('scamshield_theme') || 'light',
     ...settings,
   });
+
+  useEffect(() => {
+    if (settings) {
+      setFormData((prev) => ({
+        ...prev,
+        ...settings,
+        appearance: localStorage.getItem('scamshield_theme') || settings.appearance || 'light',
+      }));
+    }
+  }, [settings]);
   const [saving, setSaving] = useState(false);
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [confirmWipe, setConfirmWipe] = useState(false);
