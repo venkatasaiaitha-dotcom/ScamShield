@@ -18,3 +18,101 @@
   margin-left: 4px !important;
   cursor: help !important;
 }
+
+/* Floating In-Page Audit Modal */
+#scamshield-audit-overlay {
+  position: fixed !important;
+  top: 24px !important;
+  right: 24px !important;
+  z-index: 2147483647 !important;
+  width: 360px !important;
+  background: #FFFFFF !important;
+  color: #172033 !important;
+  border-radius: 16px !important;
+  box-shadow: 0 20px 40px -15px rgba(0,0,0,0.25), 0 0 0 1px #E2E8F0 !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+  animation: scamshieldSlideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+  padding: 16px !important;
+}
+
+@keyframes scamshieldSlideIn {
+  from { opacity: 0; transform: translateY(-16px) scale(0.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.scamshield-header {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  margin-bottom: 12px !important;
+}
+
+.scamshield-brand {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+}
+
+.scamshield-badge-high {
+  background: #FEE2E2 !important;
+  color: #DC2626 !important;
+  border: 1px solid #FCA5A5 !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  padding: 2px 8px !important;
+  border-radius: 999px !important;
+}
+
+.scamshield-badge-low {
+  background: #DCFCE7 !important;
+  color: #166534 !important;
+  border: 1px solid #BBF7D0 !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  padding: 2px 8px !important;
+  border-radius: 999px !important;
+}
+
+.scamshield-target {
+  font-size: 11px !important;
+  background: #F8FAFC !important;
+  border: 1px solid #E2E8F0 !important;
+  padding: 8px 10px !important;
+  border-radius: 8px !important;
+  word-break: break-all !important;
+  margin-bottom: 10px !important;
+  font-family: monospace !important;
+}
+
+.scamshield-indicators {
+  margin: 8px 0 !important;
+  padding-left: 16px !important;
+  font-size: 11px !important;
+  color: #475569 !important;
+  line-height: 1.4 !important;
+}
+
+.scamshield-rec {
+  background: #FEF2F2 !important;
+  border: 1px solid #FEE2E2 !important;
+  color: #991B1B !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  padding: 8px 10px !important;
+  border-radius: 8px !important;
+  margin-top: 8px !important;
+}
+
+.scamshield-close-btn {
+  background: none !important;
+  border: none !important;
+  cursor: pointer !important;
+  font-size: 16px !important;
+  color: #94A3B8 !important;
+  padding: 2px !important;
+}
+.scamshield-close-btn:hover {
+  color: #1E293B !important;
+}
