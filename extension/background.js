@@ -111,3 +111,18 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
     }
   }
 });
+
+// Update extension icon badge with live count of threats on the active tab
+chrome.runtime.onMessage.addListener((request, sender) => {
+  if (request.action === "UPDATE_PAGE_THREATS") {
+    const tabId = sender.tab ? sender.tab.id : null;
+    if (tabId) {
+      if (request.count > 0) {
+        chrome.action.setBadgeText({ tabId, text: String(request.count) });
+        chrome.action.setBadgeBackgroundColor({ tabId, color: "#DC2626" });
+      } else {
+        chrome.action.setBadgeText({ tabId, text: "" });
+      }
+    }
+  }
+});

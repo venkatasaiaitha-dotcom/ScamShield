@@ -1,3 +1,4 @@
+/* ScamShield Link Highlighting */
 .scamshield-warning-link {
   background-color: #FEE2E2 !important;
   color: #DC2626 !important;
@@ -5,6 +6,13 @@
   padding: 1px 4px !important;
   border-radius: 4px !important;
   text-decoration: line-through !important;
+  transition: all 0.2s ease !important;
+  cursor: pointer !important;
+}
+
+.scamshield-warning-link:hover {
+  background-color: #FECACA !important;
+  box-shadow: 0 0 8px rgba(220, 38, 38, 0.4) !important;
 }
 
 .scamshield-warning-badge {
@@ -17,9 +25,129 @@
   border-radius: 6px !important;
   margin-left: 4px !important;
   cursor: help !important;
+  display: inline-block !important;
+  line-height: 1.3 !important;
+  vertical-align: middle !important;
 }
 
-/* Floating In-Page Audit Modal */
+/* Floating Live Page Alert Banner / Pill */
+#scamshield-page-alert-pill {
+  position: fixed !important;
+  bottom: 24px !important;
+  right: 24px !important;
+  z-index: 2147483646 !important;
+  background: #FFFFFF !important;
+  color: #172033 !important;
+  border-radius: 14px !important;
+  box-shadow: 0 10px 30px -5px rgba(0,0,0,0.2), 0 0 0 1px #E2E8F0 !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+  max-width: 380px !important;
+  animation: scamshieldPillIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+  overflow: hidden !important;
+}
+
+@keyframes scamshieldPillIn {
+  from { opacity: 0; transform: translateY(20px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.scamshield-pill-header {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  padding: 10px 14px !important;
+  background: #FEF2F2 !important;
+  border-bottom: 1px solid #FEE2E2 !important;
+  font-size: 12px !important;
+}
+
+.scamshield-pulsing-dot {
+  width: 8px !important;
+  height: 8px !important;
+  border-radius: 999px !important;
+  background: #DC2626 !important;
+  box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7) !important;
+  animation: scamshieldPulse 1.5s infinite !important;
+  flex-shrink: 0 !important;
+}
+
+@keyframes scamshieldPulse {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(220, 38, 38, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
+}
+
+.scamshield-pill-btn {
+  background: #FFFFFF !important;
+  border: 1px solid #CBD5E1 !important;
+  color: #334155 !important;
+  border-radius: 6px !important;
+  padding: 3px 8px !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  margin-left: auto !important;
+}
+.scamshield-pill-btn:hover {
+  background: #F8FAFC !important;
+}
+
+.scamshield-pill-close {
+  background: none !important;
+  border: none !important;
+  color: #94A3B8 !important;
+  font-size: 14px !important;
+  cursor: pointer !important;
+  padding: 0 4px !important;
+}
+
+.scamshield-pill-content {
+  padding: 12px !important;
+  font-size: 11px !important;
+  max-height: 200px !important;
+  overflow-y: auto !important;
+}
+
+.scamshield-threat-item {
+  padding: 6px 8px !important;
+  border-radius: 6px !important;
+  background: #F8FAFC !important;
+  border: 1px solid #E2E8F0 !important;
+  margin-bottom: 6px !important;
+  word-break: break-all !important;
+}
+
+/* Interception Modal when clicking suspicious links */
+#scamshield-intercept-modal {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 2147483647 !important;
+  background: rgba(15, 23, 42, 0.75) !important;
+  backdrop-filter: blur(4px) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 16px !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+}
+
+.scamshield-intercept-card {
+  background: #FFFFFF !important;
+  border-radius: 18px !important;
+  max-width: 440px !important;
+  width: 100% !important;
+  padding: 24px !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+  text-align: center !important;
+  animation: scamshieldModalZoom 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+@keyframes scamshieldModalZoom {
+  from { opacity: 0; transform: scale(0.92); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* Floating Right-Click Audit Modal */
 #scamshield-audit-overlay {
   position: fixed !important;
   top: 24px !important;
