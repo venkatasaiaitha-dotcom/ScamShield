@@ -10,10 +10,58 @@ from ..services.image_analyzer import ImageAnalyzer
 from ..ml.classifier import classifier
 from ..security.deps import get_current_user, verify_webhook_auth
 from ..security.rate_limiter import rate_limit
-from ..database import get_user_by_email
+from ..database import get_user_by_email, get_campaigns
 from ..config import ADMIN_EMAIL
 
 router = APIRouter(prefix="/api", tags=["Messages & Analysis"])
+
+EXPO_DRILL_SCENARIOS = [
+    {
+        "id": "DRILL_FAKE_KYC",
+        "title": "1. Fake Bank KYC Phishing (Multi-Stage Kill Chain)",
+        "scenario_type": "FAKE_KYC",
+        "sender": "SBI-ALERT",
+        "channel": "SMS",
+        "content": "Dear Customer, Your SBI NetBanking KYC has expired today. Your account and card will be deactivated in 12 hours. Update KYC immediately at: http://sbi-kyc-verify-portal.in/login",
+        "key_features": ["Attack Chain: Credential Theft (Stage 3)", "Typosquatting (.in/login deceptive path)", "Adversary Next-Move Forecast"]
+    },
+    {
+        "id": "DRILL_UPI_SCAM",
+        "title": "2. Electricity Bill Cutoff (UPI Payment Entity Mismatch)",
+        "scenario_type": "UTILITY_IMPERSONATION",
+        "sender": "BESCOM-POWER",
+        "channel": "SMS",
+        "content": "Dear Consumer, Electricity power will be disconnected tonight at 9:30 PM due to unpaid bill of ₹1,480. Pay immediately via UPI to electricity-billdesk@okaxis to avoid penalty.",
+        "key_features": ["UPI Payment Safety: HIGH RISK DO NOT PAY", "Critical Mismatch: BESCOM vs Personal Axis VPA", "Psychological Panic Deadline"]
+    },
+    {
+        "id": "DRILL_JOB_SCAM",
+        "title": "3. Part-Time Telegram Job Trap (Hinglish Code-Mix)",
+        "scenario_type": "JOB_SCAM",
+        "sender": "+91-98765-43210",
+        "channel": "WHATSAPP",
+        "content": "Part-Time Work From Home! Rozana ₹3,000 se ₹8,000 kamaye YouTube videos like karke. Joining ke liye turant ₹499 registration kit fee UPI karein quick-work@ybl par.",
+        "key_features": ["Indian Multilingual: Hinglish Detected", "Advance Fee Trap", "Attack Chain: Trust Building ➔ Payment Attempt"]
+    },
+    {
+        "id": "DRILL_COURIER_SCAM",
+        "title": "4. Courier Delivery Interception (Quishing QR & Redirection)",
+        "scenario_type": "DELIVERY_SCAM",
+        "sender": "IndiaPost-Notice",
+        "channel": "SMS",
+        "content": "Your parcel #AMZ-9918 could not be delivered due to incomplete street address. Update address within 24 hours at http://indiapost-update-address.top/redirection or package will be returned.",
+        "key_features": ["Scam DNA: Phishing URL (.top TLD)", "Short-fuse Artificial Deadline", "Redirection Trap"]
+    },
+    {
+        "id": "DRILL_INVESTMENT_SCAM",
+        "title": "5. Crypto / High-Yield Scheme (Greed Bait & Advance Loss)",
+        "scenario_type": "INVESTMENT_SCAM",
+        "sender": "CryptoYield-VIP",
+        "channel": "WHATSAPP",
+        "content": "Guaranteed 200% return in 48 hours! Institutional algorithmic crypto pool. Send minimum ₹10,000 to pool wallet VPA cryptopool@ybl before slot expires.",
+        "key_features": ["Attack Chain: Payment Attempt (Stage 4)", "Financial Greed Bait", "Unverified Crypto VPA Handle"]
+    }
+]
 
 class ScenarioRequest(BaseModel):
     scenario_type: Optional[str] = Field("RANDOM", max_length=50)
@@ -34,6 +82,16 @@ class ImageCheckRequest(BaseModel):
 async def list_scenarios():
     """Lists available demo scenarios for live interactive testing"""
     return DEMO_SCENARIOS
+
+@router.get("/expo/drills")
+async def list_expo_drills():
+    """Returns 5 predefined Expo Demo / Cyber Drill test scenarios"""
+    return EXPO_DRILL_SCENARIOS
+
+@router.get("/campaigns")
+async def list_scam_campaigns(limit: int = 20, current_user: dict = Depends(get_current_user)):
+    """Returns active Scam DNA campaigns with variant counts and community immunity stats"""
+    return get_campaigns(limit)
 
 @router.post("/messages/incoming")
 async def receive_incoming_message(

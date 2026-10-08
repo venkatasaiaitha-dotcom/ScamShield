@@ -29,7 +29,11 @@ from .connection import (
     get_stats,
     save_community_report,
     get_community_reports,
-    upvote_community_report
+    upvote_community_report,
+    record_or_update_campaign,
+    get_campaigns,
+    record_upi_safety,
+    record_attack_chain
 )
 
 __all__ = [
@@ -62,5 +66,9 @@ __all__ = [
     "get_stats",
     "save_community_report",
     "get_community_reports",
-    "upvote_community_report"
+    "upvote_community_report",
+    "record_or_update_campaign",
+    "get_campaigns",
+    "record_upi_safety",
+    "record_attack_chain"
 ]

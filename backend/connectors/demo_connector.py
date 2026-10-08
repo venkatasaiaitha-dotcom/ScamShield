@@ -70,6 +70,36 @@ DEMO_SCENARIOS = [
         "sender": "WhatsApp-Support (WhatsApp)",
         "content": "Your WhatsApp account is scheduled to be deactivated within 12 hours due to policy violations. To cancel deactivation and verify your phone number, click: http://whatsapp-support-helpdesk.online/verify",
         "label": "WhatsApp Account Takeover Phishing"
+    },
+    {
+        "type": "DRILL_FAKE_KYC",
+        "sender": "SBI-ALERT",
+        "content": "Dear Customer, Your SBI NetBanking KYC has expired today. Your account and card will be deactivated in 12 hours. Update KYC immediately at: http://sbi-kyc-verify-portal.in/login",
+        "label": "Expo Drill 1: Fake Bank KYC Phishing"
+    },
+    {
+        "type": "DRILL_UPI_SCAM",
+        "sender": "BESCOM-POWER",
+        "content": "Dear Consumer, Electricity power will be disconnected tonight at 9:30 PM due to unpaid bill of ₹1,480. Pay immediately via UPI to electricity-billdesk@okaxis to avoid penalty.",
+        "label": "Expo Drill 2: Electricity Bill Cutoff UPI Scam"
+    },
+    {
+        "type": "DRILL_JOB_SCAM",
+        "sender": "+91-98765-43210",
+        "content": "Part-Time Work From Home! Rozana ₹3,000 se ₹8,000 kamaye YouTube videos like karke. Joining ke liye turant ₹499 registration kit fee UPI karein quick-work@ybl par.",
+        "label": "Expo Drill 3: Part-Time Job Advance Fee Fraud"
+    },
+    {
+        "type": "DRILL_COURIER_SCAM",
+        "sender": "IndiaPost-Notice",
+        "content": "Your parcel #AMZ-9918 could not be delivered due to incomplete street address. Update address within 24 hours at http://indiapost-update-address.top/redirection or package will be returned.",
+        "label": "Expo Drill 4: Courier Delivery Redirection Quishing"
+    },
+    {
+        "type": "DRILL_INVESTMENT_SCAM",
+        "sender": "CryptoYield-VIP",
+        "content": "Guaranteed 200% return in 48 hours! Institutional algorithmic crypto pool. Send minimum ₹10,000 to pool wallet VPA cryptopool@ybl before slot expires.",
+        "label": "Expo Drill 5: Crypto High-Yield Investment Scheme"
     }
 ]
 

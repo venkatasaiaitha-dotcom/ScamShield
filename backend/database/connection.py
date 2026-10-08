@@ -198,6 +198,66 @@ def init_db():
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, sample_reports)
 
+    # 11. Scam Campaigns DNA Table
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS scam_campaigns (
+        id TEXT PRIMARY KEY,
+        dna_hash TEXT UNIQUE NOT NULL,
+        scam_type TEXT NOT NULL,
+        impersonated_brand TEXT,
+        attack_techniques TEXT,
+        variant_count INTEGER DEFAULT 1,
+        community_reports_count INTEGER DEFAULT 0,
+        immunity_protected_count INTEGER DEFAULT 1,
+        first_seen TEXT NOT NULL,
+        last_seen TEXT NOT NULL,
+        threat_status TEXT DEFAULT 'ACTIVE'
+    )
+    """)
+
+    # 12. Scam Attack Chains Table
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS attack_chains (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL,
+        campaign_id TEXT,
+        current_stage TEXT NOT NULL,
+        stages_history TEXT NOT NULL,
+        predicted_next_stage TEXT,
+        prediction_confidence REAL,
+        updated_at TEXT NOT NULL
+    )
+    """)
+
+    # 13. UPI Payment Safety Records Table
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS upi_safety_records (
+        id TEXT PRIMARY KEY,
+        analysis_id TEXT NOT NULL,
+        vpa_handle TEXT,
+        payee_name TEXT,
+        claimed_entity TEXT,
+        is_mismatch INTEGER DEFAULT 0,
+        safety_verdict TEXT NOT NULL,
+        risk_reasons TEXT,
+        created_at TEXT NOT NULL
+    )
+    """)
+
+    # Seed initial campaigns if empty
+    cursor.execute("SELECT COUNT(*) FROM scam_campaigns")
+    if cursor.fetchone()[0] == 0:
+        initial_campaigns = [
+            ("CMP-SBI-9E4B", "DNA-SBI-FAK-PHIS-9E4B", "FAKE_KYC", "State Bank of India", json.dumps(["T1566.002 Spearphishing Link", "T1586.002 Brand Impersonation", "T1056 Credential Harvesting"]), 38, 48, 342, "02 Oct, 09:15 AM", "Just now", "ACTIVE"),
+            ("CMP-ELE-3B1A", "DNA-ELE-UTI-UPI-3B1A", "UTILITY_IMPERSONATION", "Electricity Board", json.dumps(["T1586 Authority Impersonation", "T1659 Social Engineering UPI Trap", "T1498 Threat of Cutoff"]), 19, 35, 189, "04 Oct, 11:20 AM", "Just now", "ACTIVE"),
+            ("CMP-WHA-7C2F", "DNA-WHA-WHA-UPI-7C2F", "WHATSAPP_FAMILY_IMPERSONATION", "WhatsApp Family", json.dumps(["T1586 Human Relationship Impersonation", "T1659 Urgent UPI Trap"]), 12, 29, 147, "05 Oct, 02:40 PM", "Just now", "ACTIVE"),
+            ("CMP-JOB-5A8D", "DNA-GEN-JOB-ADV-5A8D", "JOB_SCAM", "Part-Time Review Portal", json.dumps(["T1566 Phishing", "T1659 Advance Fee Trap", "T1437 Application Coercion"]), 44, 61, 512, "01 Oct, 08:00 AM", "Just now", "ACTIVE"),
+        ]
+        cursor.executemany("""
+        INSERT INTO scam_campaigns (id, dna_hash, scam_type, impersonated_brand, attack_techniques, variant_count, community_reports_count, immunity_protected_count, first_seen, last_seen, threat_status)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, initial_campaigns)
+
     # Migration check: Ensure user_id column exists if table was created in older version
     cursor.execute("PRAGMA table_info(analyses)")
     cols = [col["name"] for col in cursor.fetchall()]
@@ -895,3 +955,146 @@ def upvote_community_report(report_id: str) -> int:
     count = row[0] if row else 1
     conn.close()
     return count
+
+# ----------------- SCAM DNA & CAMPAIGNS ----------------- #
+
+def record_or_update_campaign(dna_data: Dict[str, Any]) -> Dict[str, Any]:
+    conn = get_connection()
+    try:
+        cursor = conn.cursor()
+        dna_hash = dna_data["dna_hash"]
+        
+        cursor.execute("SELECT * FROM scam_campaigns WHERE dna_hash = ?", (dna_hash,))
+        row = cursor.fetchone()
+        
+        now_str = datetime.now().strftime("%d %b, %I:%M %p")
+        
+        if row:
+            campaign = dict(row)
+            new_variants = campaign["variant_count"] + 1
+            new_immunity = campaign.get("immunity_protected_count", 1) + 3
+            cursor.execute("""
+                UPDATE scam_campaigns 
+                SET variant_count = ?, last_seen = ?, immunity_protected_count = ?
+                WHERE id = ?
+            """, (new_variants, "Just now", new_immunity, campaign["id"]))
+            conn.commit()
+            try:
+                techniques = json.loads(campaign["attack_techniques"])
+            except Exception:
+                techniques = dna_data.get("attack_techniques", [])
+            return {
+                "campaign_id": campaign["id"],
+                "dna_hash": campaign["dna_hash"],
+                "scam_type": campaign["scam_type"],
+                "impersonated_brand": campaign["impersonated_brand"],
+                "attack_techniques": techniques,
+                "variant_count": new_variants,
+                "community_reports": campaign["community_reports_count"],
+                "immunity_protected_count": new_immunity,
+                "first_seen": campaign["first_seen"],
+                "last_seen": "Just now",
+                "threat_status": campaign["threat_status"],
+                "is_existing_campaign": True
+            }
+        else:
+            campaign_id = dna_data.get("campaign_id", f"CMP-{dna_hash[:8]}")
+            cursor.execute("""
+                INSERT INTO scam_campaigns (id, dna_hash, scam_type, impersonated_brand, attack_techniques, variant_count, community_reports_count, immunity_protected_count, first_seen, last_seen, threat_status)
+                VALUES (?, ?, ?, ?, ?, 1, 0, 1, ?, 'Just now', 'ACTIVE')
+            """, (
+                campaign_id,
+                dna_hash,
+                dna_data.get("scam_type", "GENERIC_SCAM"),
+                dna_data.get("impersonated_brand", "Unknown"),
+                json.dumps(dna_data.get("attack_techniques", [])),
+                now_str
+            ))
+            conn.commit()
+            return {
+                "campaign_id": campaign_id,
+                "dna_hash": dna_hash,
+                "scam_type": dna_data.get("scam_type", "GENERIC_SCAM"),
+                "impersonated_brand": dna_data.get("impersonated_brand", "Unknown"),
+                "attack_techniques": dna_data.get("attack_techniques", []),
+                "variant_count": 1,
+                "community_reports": 0,
+                "immunity_protected_count": 1,
+                "first_seen": now_str,
+                "last_seen": "Just now",
+                "threat_status": "ACTIVE",
+                "is_existing_campaign": False
+            }
+    finally:
+        conn.close()
+
+def get_campaigns(limit: int = 20) -> List[Dict[str, Any]]:
+    conn = get_connection()
+    try:
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT * FROM scam_campaigns ORDER BY variant_count DESC, rowid DESC LIMIT ?
+        """, (limit,))
+        rows = cursor.fetchall()
+        out = []
+        for r in rows:
+            c = dict(r)
+            try:
+                c["attack_techniques"] = json.loads(c["attack_techniques"])
+            except Exception:
+                c["attack_techniques"] = []
+            out.append(c)
+        return out
+    finally:
+        conn.close()
+
+def record_upi_safety(upi_data: Dict[str, Any], analysis_id: str):
+    if not upi_data.get("has_upi_payload"):
+        return
+    conn = get_connection()
+    try:
+        cursor = conn.cursor()
+        upi_id = f"upi-{uuid.uuid4().hex[:8]}"
+        now_str = datetime.now().strftime("%d %b, %I:%M %p")
+        cursor.execute("""
+            INSERT INTO upi_safety_records (id, analysis_id, vpa_handle, payee_name, claimed_entity, is_mismatch, safety_verdict, risk_reasons, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (
+            upi_id,
+            analysis_id,
+            upi_data.get("primary_vpa"),
+            upi_data.get("uri_data", {}).get("payee_name") if upi_data.get("uri_data") else None,
+            upi_data.get("mismatch_details"),
+            1 if upi_data.get("is_mismatch") else 0,
+            upi_data.get("safety_verdict", "SAFE"),
+            json.dumps(upi_data.get("reasons", [])),
+            now_str
+        ))
+        conn.commit()
+    finally:
+        conn.close()
+
+def record_attack_chain(user_id: Optional[str], chain_data: Dict[str, Any], campaign_id: Optional[str] = None):
+    target_user = user_id or "default"
+    conn = get_connection()
+    try:
+        cursor = conn.cursor()
+        chain_id = f"chn-{uuid.uuid4().hex[:8]}"
+        now_str = datetime.now().strftime("%d %b, %I:%M %p")
+        cursor.execute("""
+            INSERT INTO attack_chains (id, user_id, campaign_id, current_stage, stages_history, predicted_next_stage, prediction_confidence, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        """, (
+            chain_id,
+            target_user,
+            campaign_id,
+            chain_data.get("current_stage_name", "Initial Contact"),
+            json.dumps(chain_data.get("stages_timeline", [])),
+            chain_data.get("predicted_next_stage"),
+            0.88,
+            now_str
+        ))
+        conn.commit()
+    finally:
+        conn.close()
+

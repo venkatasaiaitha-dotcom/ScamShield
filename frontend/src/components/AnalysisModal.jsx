@@ -19,9 +19,14 @@ import {
   Radio,
   QrCode,
   Send,
-  Loader2
+  Loader2,
+  Languages
 } from 'lucide-react';
 import { api } from '../services/api';
+import ScamAttackChainCard from './ScamAttackChainCard';
+import ScamDNACard from './ScamDNACard';
+import UPISafetyCard from './UPISafetyCard';
+import AttackerNextMoveCard from './AttackerNextMoveCard';
 
 export default function AnalysisModal({ analysis, onClose }) {
   const [showTechnical, setShowTechnical] = useState(false);
@@ -148,6 +153,61 @@ export default function AnalysisModal({ analysis, onClose }) {
               {analysis.content_preview || '(No content preview)'}
             </div>
           </div>
+
+          {/* Multilingual / Code-Mixed Indian Social Engineering Alert */}
+          {analysis.multilingual && analysis.multilingual.is_multilingual && (
+            <div className="bg-gradient-to-r from-orange-50 to-amber-50 rounded-xl p-3.5 border border-orange-200 text-xs flex items-start gap-2.5">
+              <div className="p-1.5 bg-orange-100 text-orange-700 rounded-lg shrink-0 mt-0.5">
+                <Languages className="w-4 h-4" />
+              </div>
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="font-bold text-orange-900">
+                    Indian Code-Mixed Dialect Detected
+                  </span>
+                  <span className="text-[10px] font-mono font-semibold bg-orange-200/80 text-orange-800 px-2 py-0.5 rounded">
+                    {analysis.multilingual.language_mix || 'Hinglish / Tenglish'}
+                  </span>
+                </div>
+                <p className="text-slate-700 text-xs leading-relaxed">
+                  {analysis.multilingual.summary_note ||
+                    'Analyzed Indian code-mixed phrasing. Deceptive intent and urgency markers were identified within regional colloquialisms.'}
+                </p>
+                {analysis.multilingual.matched_signals && analysis.multilingual.matched_signals.length > 0 && (
+                  <div className="mt-2 flex flex-wrap gap-1.5">
+                    {analysis.multilingual.matched_signals.map((sig, sIdx) => (
+                      <span
+                        key={sIdx}
+                        className="text-[10px] font-mono bg-white border border-orange-200 text-orange-900 px-2 py-0.5 rounded shadow-2xs"
+                      >
+                        {sig.type}: "{sig.term}" ({sig.dialect})
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Signature Feature 3: UPI Payment Safety Guard */}
+          {analysis.upi_safety && analysis.upi_safety.has_upi_payload && (
+            <UPISafetyCard upiSafety={analysis.upi_safety} />
+          )}
+
+          {/* Signature Feature 1: Scam Attack Chain Detection */}
+          {analysis.attack_chain && (
+            <ScamAttackChainCard attackChain={analysis.attack_chain} />
+          )}
+
+          {/* Signature Feature 4: Attacker Next-Move Prediction */}
+          {analysis.next_moves_forecast && analysis.next_moves_forecast.length > 0 && (
+            <AttackerNextMoveCard nextMoves={analysis.next_moves_forecast} />
+          )}
+
+          {/* Signature Feature 2 & 5: Scam DNA & Community Immunity Card */}
+          {analysis.scam_dna && (
+            <ScamDNACard scamDna={analysis.scam_dna} />
+          )}
 
           {/* Explainable Summary */}
           <div>

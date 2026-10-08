@@ -17,6 +17,7 @@ import SimulatorQuickBar from '../components/SimulatorQuickBar';
 import GmailConnectorCard from '../components/GmailConnectorCard';
 import ImageInspectorCard from '../components/ImageInspectorCard';
 import BrowserExtensionCard from '../components/BrowserExtensionCard';
+import CyberDrillConsole from '../components/CyberDrillConsole';
 
 export default function DashboardView({
   agentStatus,
@@ -84,6 +85,14 @@ export default function DashboardView({
       <SimulatorQuickBar
         onTriggerScenario={onTriggerScenario}
         isSimulating={isSimulating}
+      />
+
+      {/* Expo Demo / Cyber Drill Mode Console */}
+      <CyberDrillConsole
+        onAnalysisComplete={(res) => {
+          if (onMessageAnalyzed) onMessageAnalyzed(res);
+          if (onViewAnalysis) onViewAnalysis(res);
+        }}
       />
 
       {/* 2-Column Split: Recent Threats & Live Protection Activity Timeline */}

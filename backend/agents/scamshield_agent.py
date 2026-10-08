@@ -10,7 +10,9 @@ from ..database import (
     save_analysis,
     get_stats,
     get_sources,
-    increment_source_count
+    increment_source_count,
+    record_upi_safety,
+    record_attack_chain
 )
 from ..services.message_ingestion import MessageIngestionService
 from ..services.notification_service import notification_service
@@ -131,11 +133,30 @@ class ScamShieldAgent:
             "reasons": analysis_result["reasons"],
             "recommendations": analysis_result["recommendations"],
             "urls_detected": analysis_result["urls_detected"],
-            "technical_details": analysis_result["technical_details"]
+            "technical_details": analysis_result["technical_details"],
+            "scam_dna": analysis_result.get("scam_dna"),
+            "attack_chain": analysis_result.get("attack_chain"),
+            "next_moves_forecast": analysis_result.get("next_moves_forecast", []),
+            "upi_safety": analysis_result.get("upi_safety"),
+            "multilingual": analysis_result.get("multilingual")
         }
 
         # 3. Save to database with user tenant isolation
         save_analysis(full_analysis_dict, normalized["content"], user_id=user_id, privacy_minimal=minimal_metadata)
+
+        # Record secondary telemetry
+        if analysis_result.get("upi_safety"):
+            try:
+                record_upi_safety(analysis_result["upi_safety"], analysis_id)
+            except Exception:
+                pass
+
+        if analysis_result.get("attack_chain"):
+            try:
+                cid = analysis_result.get("scam_dna", {}).get("campaign_id")
+                record_attack_chain(user_id, analysis_result["attack_chain"], campaign_id=cid)
+            except Exception:
+                pass
 
         # 4. Dispatch live real-time notification to the user's authenticated WebSocket only
         stats = get_stats(user_id)
