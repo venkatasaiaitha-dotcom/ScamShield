@@ -1,0 +1,26 @@
+{
+  "short_name": "ScamShield",
+  "name": "ScamShield — AI Scam & Fraud Protection Agent",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "192x192 512x512"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#F5F7FB",
+  "theme_color": "#0F766E",
+  "display": "standalone",
+  "orientation": "portrait",
+  "description": "Proactive mobile AI agent that intercepts and analyzes scam SMS, WhatsApp, and Gmail threats in real-time.",
+  "share_target": {
+    "action": "/",
+    "method": "GET",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  }
+}

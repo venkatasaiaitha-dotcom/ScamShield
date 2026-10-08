@@ -5,8 +5,10 @@ export default function SimulatorQuickBar({ onTriggerScenario, isSimulating }) {
   const [activeScenario, setActiveScenario] = useState(null);
 
   const presets = [
-    { type: 'FAKE_KYC', label: 'Fake KYC Phishing', icon: AlertOctagon, color: 'bg-red-50 text-red-700 border-red-200 hover:bg-red-100' },
+    { type: 'WHATSAPP_FAMILY_IMPERSONATION', label: 'WhatsApp Hi-Mum Scam', icon: AlertOctagon, color: 'bg-red-50 text-red-700 border-red-200 hover:bg-red-100' },
+    { type: 'FAKE_KYC', label: 'SMS Fake KYC Phishing', icon: AlertOctagon, color: 'bg-red-50 text-red-700 border-red-200 hover:bg-red-100' },
     { type: 'BANK_IMPERSONATION', label: 'Bank Impersonation', icon: AlertOctagon, color: 'bg-red-50 text-red-700 border-red-200 hover:bg-red-100' },
+    { type: 'WHATSAPP_ACCOUNT_TAKEOVER', label: 'WhatsApp Deactivation Link', icon: AlertTriangle, color: 'bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100' },
     { type: 'JOB_SCAM', label: 'Part-time Job Fraud', icon: AlertTriangle, color: 'bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100' },
     { type: 'PRIZE_SCAM', label: 'Lottery / Prize', icon: AlertTriangle, color: 'bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100' },
     { type: 'LEGITIMATE_OTP', label: 'Safe Bank OTP', icon: CheckCircle2, color: 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100' },

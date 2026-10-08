@@ -58,6 +58,18 @@ DEMO_SCENARIOS = [
         "sender": "IndiGo-Air",
         "content": "Flight 6E-204 from HYD to BLR is on schedule for boarding at Gate 14 at 19:20. Web check-in completed. Have a pleasant flight.",
         "label": "Flight Boarding Update"
+    },
+    {
+        "type": "WHATSAPP_FAMILY_IMPERSONATION",
+        "sender": "+91-91234-56789 (WhatsApp)",
+        "content": "Hi Mom, my phone fell in water and got damaged. This is my temporary WhatsApp number. I urgently need to pay my college exam fee ₹15,000 before 5 PM. Can you please transfer to UPI id: college-fees@upi immediately? Can't call mic broken.",
+        "label": "WhatsApp 'Hi Mum / Family' Emergency Scam"
+    },
+    {
+        "type": "WHATSAPP_ACCOUNT_TAKEOVER",
+        "sender": "WhatsApp-Support (WhatsApp)",
+        "content": "Your WhatsApp account is scheduled to be deactivated within 12 hours due to policy violations. To cancel deactivation and verify your phone number, click: http://whatsapp-support-helpdesk.online/verify",
+        "label": "WhatsApp Account Takeover Phishing"
     }
 ]
 

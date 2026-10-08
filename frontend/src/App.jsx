@@ -3,6 +3,7 @@ import Navbar from './components/Navbar';
 import BottomNav from './components/BottomNav';
 import AlertModal from './components/AlertModal';
 import AnalysisModal from './components/AnalysisModal';
+import MobileHeadsUpNotification from './components/MobileHeadsUpNotification';
 import AuthModal from './components/AuthModal';
 import DashboardView from './views/DashboardView';
 import AlertsView from './views/AlertsView';
@@ -45,9 +46,10 @@ export default function App() {
   const [isSimulating, setIsSimulating] = useState(false);
   const [isSendingCustom, setIsSendingCustom] = useState(false);
 
-  // Modals
+  // Modals & Notifications
   const [activeIncomingAlert, setActiveIncomingAlert] = useState(null);
   const [selectedAnalysis, setSelectedAnalysis] = useState(null);
+  const [mobileHeadsUpNotification, setMobileHeadsUpNotification] = useState(null);
 
   // Search & Filter in History
   const [searchTerm, setSearchTerm] = useState('');
@@ -176,6 +178,8 @@ export default function App() {
               reasons_summary: (analysis.reasons || []).map((r) => r.title || r),
             };
 
+            setMobileHeadsUpNotification(analysis);
+
             if (notification_tier === 'PROMINENT_ALERT' || analysis.risk_level === 'HIGH') {
               if (soundEnabledRef.current) playAlertChime(true);
               setActiveIncomingAlert(analysis);
@@ -260,6 +264,32 @@ export default function App() {
       reasons_summary: (res.reasons || []).map((r) => r.title || r),
     };
 
+    // Mobile Haptic Vibration Alert
+    if ('vibrate' in navigator) {
+      try {
+        if (res.risk_level === 'HIGH') {
+          navigator.vibrate([250, 100, 250]);
+        } else if (res.risk_level === 'SUSPICIOUS') {
+          navigator.vibrate([150]);
+        }
+      } catch (e) {}
+    }
+
+    // Native Mobile & Browser Notification
+    if ('Notification' in window && Notification.permission === 'granted' && (res.risk_level === 'HIGH' || res.risk_level === 'SUSPICIOUS')) {
+      try {
+        new Notification(`🛡️ ScamShield Alert: ${res.risk_level} RISK`, {
+          body: `${res.sender}: ${res.summary}`,
+          icon: '/favicon.svg',
+          badge: '/favicon.svg',
+          tag: `scamshield-${res.id}`,
+        });
+      } catch (e) {}
+    }
+
+    // Trigger Mobile Heads-Up Drop Notification
+    setMobileHeadsUpNotification(res);
+
     if (res.risk_level === 'HIGH') {
       if (soundEnabledRef.current) playAlertChime(true);
       setActiveIncomingAlert(res);
@@ -300,6 +330,22 @@ export default function App() {
       setIsSendingCustom(false);
     }
   };
+
+  // Mobile Web Share Target & URL Ingestion Listener
+  useEffect(() => {
+    try {
+      const searchParams = new URLSearchParams(window.location.search);
+      const sharedText = searchParams.get('text') || searchParams.get('url') || searchParams.get('title');
+      if (sharedText && sharedText.trim()) {
+        handleSendCustomMessage({
+          source: 'MOBILE_SHARE',
+          sender: 'Shared from Mobile App',
+          content: sharedText.trim(),
+        });
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+    } catch (e) {}
+  }, []);
 
   const handleDateRangeChange = (newRange) => {
     setDateRange(newRange);
@@ -449,6 +495,7 @@ export default function App() {
             isSendingCustom={isSendingCustom}
             onMessageAnalyzed={handleNewAnalysis}
             onViewAnalysis={(analysis) => setSelectedAnalysis(analysis)}
+            onTriggerScenario={handleTriggerScenario}
           />
         )}
 
@@ -470,6 +517,16 @@ export default function App() {
         currentTab={currentTab}
         setCurrentTab={setCurrentTab}
         unreadCount={unreadAlertsCount}
+      />
+
+      {/* Mobile Heads-Up Floating Alert Notification */}
+      <MobileHeadsUpNotification
+        notification={mobileHeadsUpNotification}
+        onClose={() => setMobileHeadsUpNotification(null)}
+        onInspect={(analysis) => {
+          setSelectedAnalysis(analysis);
+          setActiveIncomingAlert(null);
+        }}
       />
 
       {/* Pop-up Modals */}

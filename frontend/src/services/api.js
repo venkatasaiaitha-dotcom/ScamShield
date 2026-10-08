@@ -122,6 +122,14 @@ const DEMO_PRESETS = {
     sender: 'AmazonLogistics',
     content: 'Your package containing "Wireless Bluetooth Earbuds" has been delivered to your receptionist. Tracking ID: AMZ9810428. Thank you for shopping with Amazon.',
   },
+  WHATSAPP_FAMILY_IMPERSONATION: {
+    sender: '+91-91234-56789 (WhatsApp)',
+    content: 'Hi Mom, my phone fell in water and got damaged. This is my temporary WhatsApp number. I urgently need to pay my college exam fee ₹15,000 before 5 PM. Can you please transfer to UPI id: college-fees@upi immediately? Can\'t call mic broken.',
+  },
+  WHATSAPP_ACCOUNT_TAKEOVER: {
+    sender: 'WhatsApp-Support (WhatsApp)',
+    content: 'Your WhatsApp account is scheduled to be deactivated within 12 hours due to policy violations. To cancel deactivation and verify your phone number, click: http://whatsapp-support-helpdesk.online/verify',
+  },
 };
 
 function clientAnalyzeMessage(content, sender = 'Manual Inspection', source = 'DEMO') {
@@ -231,6 +239,19 @@ function clientAnalyzeMessage(content, sender = 'Manual Inspection', source = 'D
       severity: 'HIGH',
     });
     donts.push('Never disclose your banking passwords, card PINs, or verification codes');
+  }
+
+  // Check WhatsApp Family / Emergency Impersonation
+  if ((text.includes('hi mom') || text.includes('hi mum') || text.includes('temporary whatsapp') || text.includes('fell in water')) && (text.includes('upi') || text.includes('pay') || text.includes('money') || text.includes('fee'))) {
+    score = Math.max(score + 40, 88);
+    flags.push('FAMILY_IMPERSONATION_BAIT');
+    reasons.push({
+      title: 'WhatsApp Family Impersonation ("Hi Mum" Emergency Scam)',
+      description: 'Classic impersonation vector where attackers pretend to be a close relative using a temporary number due to a broken phone, demanding urgent UPI funds.',
+      severity: 'HIGH',
+    });
+    donts.push('Never transfer funds to a new or unverified number claiming to be family or friends');
+    dos.push('Immediately call the family member on their known existing phone number to verify their voice and identity.');
   }
 
   // Safe Transaction / Order checks
@@ -640,6 +661,17 @@ export const api = {
           messages_analyzed: getLocalHistory().filter((h) => h.source === 'SMS').length,
           last_active: '2 mins ago',
           icon: 'Smartphone',
+        },
+        {
+          id: 'src-whatsapp',
+          name: 'WhatsApp & Messaging Guard',
+          source_type: 'WHATSAPP',
+          status: 'CONNECTED',
+          requires_permission: true,
+          permission_status: 'GRANTED',
+          messages_analyzed: getLocalHistory().filter((h) => h.source === 'WHATSAPP' || (h.sender && h.sender.includes('WhatsApp'))).length,
+          last_active: 'Just now',
+          icon: 'MessageSquare',
         },
         {
           id: 'src-webhook',

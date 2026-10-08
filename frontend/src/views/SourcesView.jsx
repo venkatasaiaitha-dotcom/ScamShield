@@ -15,6 +15,7 @@ import {
   Info,
 } from 'lucide-react';
 import GmailConnectorCard from '../components/GmailConnectorCard';
+import MobileIngestionCard from '../components/MobileIngestionCard';
 
 export default function SourcesView({
   sources,
@@ -24,6 +25,7 @@ export default function SourcesView({
   isSendingCustom,
   onMessageAnalyzed,
   onViewAnalysis,
+  onTriggerScenario,
 }) {
   const [customSender, setCustomSender] = useState('SBI-ALERT');
   const [customChannel, setCustomChannel] = useState('SMS');
@@ -58,6 +60,11 @@ export default function SourcesView({
 
   return (
     <div className="space-y-8">
+      {/* Featured Mobile Interception Hub (SMS, WhatsApp, Gmail) */}
+      <MobileIngestionCard
+        onTriggerMobileSimulation={onTriggerScenario}
+      />
+
       {/* Featured Gmail Inspector Card */}
       <GmailConnectorCard
         onMessageAnalyzed={onMessageAnalyzed}
@@ -182,6 +189,7 @@ export default function SourcesView({
                 onChange={(e) => setCustomChannel(e.target.value)}
                 className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 focus:outline-none focus:border-teal-600 focus:bg-white transition-colors"
               >
+                <option value="WHATSAPP">WhatsApp (Messaging Bridge)</option>
                 <option value="SMS">SMS (Android Bridge)</option>
                 <option value="EMAIL">Inbound Email</option>
                 <option value="WEBHOOK">External Ingestion Webhook</option>
