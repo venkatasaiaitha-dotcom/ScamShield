@@ -169,6 +169,35 @@ def init_db():
     )
     """)
 
+    # 10. Community Threat Reports Table
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS community_reports (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL,
+        threat_title TEXT NOT NULL,
+        sender TEXT,
+        category TEXT NOT NULL,
+        risk_score INTEGER NOT NULL,
+        risk_level TEXT NOT NULL,
+        indicators TEXT,
+        reported_at TEXT NOT NULL,
+        upvotes INTEGER DEFAULT 1
+    )
+    """)
+
+    # Seed initial community radar reports if empty
+    cursor.execute("SELECT COUNT(*) FROM community_reports")
+    if cursor.fetchone()[0] == 0:
+        sample_reports = [
+            ("rep-sbi-01", "system", "SBI NetBanking Block Threat (Fake KYC)", "SBI-ALERT", "FAKE_KYC_PHISHING", 94, "HIGH", json.dumps(["Deceptive domain .xyz", "Artificial 24h deadline", "Requests login credentials"]), "Today, 10:15 AM", 48),
+            ("rep-elec-02", "system", "Urgent Electricity Disconnection Notice", "+91-98451-22910", "UTILITY_IMPERSONATION", 89, "HIGH", json.dumps(["Urgent threat to cut power at 9:30 PM", "Unverified personal phone number", "Requests APK download"]), "Today, 11:40 AM", 35),
+            ("rep-job-03", "system", "YouTube Video Like Daily Income Task", "TELEGRAM-HR", "TASK_ADVANCE_FEE", 82, "HIGH", json.dumps(["Promises ₹5,000/day for liking videos", "Requests ₹1,000 security deposit", "Operates via anonymous channels"]), "Yesterday", 29),
+        ]
+        cursor.executemany("""
+        INSERT INTO community_reports (id, user_id, threat_title, sender, category, risk_score, risk_level, indicators, reported_at, upvotes)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, sample_reports)
+
     # Migration check: Ensure user_id column exists if table was created in older version
     cursor.execute("PRAGMA table_info(analyses)")
     cols = [col["name"] for col in cursor.fetchall()]
@@ -799,3 +828,70 @@ def get_stats(user_id: Optional[str] = None, date_range: str = "all") -> Dict[st
         "suspicious_count": susp_count,
         "date_range": date_range
     }
+
+# ----------------- COMMUNITY SCAM RADAR ----------------- #
+
+def save_community_report(user_id: str, report_data: Dict[str, Any]) -> Dict[str, Any]:
+    conn = get_connection()
+    cursor = conn.cursor()
+    rep_id = f"rep-{uuid.uuid4().hex[:8]}"
+    reported_at = datetime.now().strftime("%d %b, %I:%M %p")
+    cursor.execute("""
+    INSERT INTO community_reports (id, user_id, threat_title, sender, category, risk_score, risk_level, indicators, reported_at, upvotes)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
+    """, (
+        rep_id,
+        user_id,
+        report_data.get("threat_title", "Suspicious Scam Pattern"),
+        report_data.get("sender", "Unknown"),
+        report_data.get("category", "SCAM"),
+        int(report_data.get("risk_score", 85)),
+        report_data.get("risk_level", "HIGH"),
+        json.dumps(report_data.get("indicators", [])),
+        reported_at
+    ))
+    conn.commit()
+    conn.close()
+    return {"id": rep_id, "status": "reported", "reported_at": reported_at}
+
+def get_community_reports(limit: int = 30) -> List[Dict[str, Any]]:
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+    SELECT id, user_id, threat_title, sender, category, risk_score, risk_level, indicators, reported_at, upvotes
+    FROM community_reports
+    ORDER BY upvotes DESC, rowid DESC
+    LIMIT ?
+    """, (limit,))
+    rows = cursor.fetchall()
+    conn.close()
+    results = []
+    for r in rows:
+        ind = []
+        try:
+            ind = json.loads(r["indicators"]) if r["indicators"] else []
+        except Exception:
+            pass
+        results.append({
+            "id": r["id"],
+            "threat_title": r["threat_title"],
+            "sender": r["sender"],
+            "category": r["category"],
+            "risk_score": r["risk_score"],
+            "risk_level": r["risk_level"],
+            "indicators": ind,
+            "reported_at": r["reported_at"],
+            "upvotes": r["upvotes"]
+        })
+    return results
+
+def upvote_community_report(report_id: str) -> int:
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("UPDATE community_reports SET upvotes = upvotes + 1 WHERE id = ?", (report_id,))
+    conn.commit()
+    cursor.execute("SELECT upvotes FROM community_reports WHERE id = ?", (report_id,))
+    row = cursor.fetchone()
+    count = row[0] if row else 1
+    conn.close()
+    return count

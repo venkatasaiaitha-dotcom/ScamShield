@@ -26,7 +26,10 @@ from .connection import (
     mark_alert_read,
     mark_all_alerts_read,
     delete_alert,
-    get_stats
+    get_stats,
+    save_community_report,
+    get_community_reports,
+    upvote_community_report
 )
 
 __all__ = [
@@ -56,5 +59,8 @@ __all__ = [
     "mark_alert_read",
     "mark_all_alerts_read",
     "delete_alert",
-    "get_stats"
+    "get_stats",
+    "save_community_report",
+    "get_community_reports",
+    "upvote_community_report"
 ]

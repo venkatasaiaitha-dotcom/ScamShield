@@ -15,6 +15,8 @@ import ProtectionHero from '../components/ProtectionHero';
 import MetricCards from '../components/MetricCards';
 import SimulatorQuickBar from '../components/SimulatorQuickBar';
 import GmailConnectorCard from '../components/GmailConnectorCard';
+import ImageInspectorCard from '../components/ImageInspectorCard';
+import BrowserExtensionCard from '../components/BrowserExtensionCard';
 
 export default function DashboardView({
   agentStatus,
@@ -56,6 +58,9 @@ export default function DashboardView({
         loadingToggle={loadingToggle}
       />
 
+      {/* Real-Time Browser Extension Companion Banner */}
+      <BrowserExtensionCard />
+
       {/* Main KPI Statistics with Date Filter */}
       <MetricCards
         stats={agentStatus}
@@ -65,6 +70,12 @@ export default function DashboardView({
 
       {/* Gmail Input & Inbound Safety Inspector */}
       <GmailConnectorCard
+        onMessageAnalyzed={onMessageAnalyzed}
+        onOpenDetail={onViewAnalysis}
+      />
+
+      {/* Visual Image & QR / Quishing Inspector */}
+      <ImageInspectorCard
         onMessageAnalyzed={onMessageAnalyzed}
         onOpenDetail={onViewAnalysis}
       />

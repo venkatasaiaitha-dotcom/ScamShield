@@ -1,0 +1,20 @@
+.scamshield-warning-link {
+  background-color: #FEE2E2 !important;
+  color: #DC2626 !important;
+  border: 1px dashed #EF4444 !important;
+  padding: 1px 4px !important;
+  border-radius: 4px !important;
+  text-decoration: line-through !important;
+}
+
+.scamshield-warning-badge {
+  color: #DC2626 !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  background: #FEF2F2 !important;
+  border: 1px solid #FCA5A5 !important;
+  padding: 1px 6px !important;
+  border-radius: 6px !important;
+  margin-left: 4px !important;
+  cursor: help !important;
+}

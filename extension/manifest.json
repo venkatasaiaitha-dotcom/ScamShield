@@ -1,0 +1,38 @@
+{
+  "manifest_version": 3,
+  "name": "ScamShield — AI Scam & Phishing Protection Agent",
+  "version": "2.0.0",
+  "description": "Proactively inspects incoming webmail and messaging links for phishing, brand impersonation, and scams.",
+  "permissions": [
+    "activeTab",
+    "storage",
+    "contextMenus"
+  ],
+  "host_permissions": [
+    "*://mail.google.com/*",
+    "*://web.whatsapp.com/*",
+    "*://*.outlook.com/*",
+    "*://*/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://mail.google.com/*",
+        "*://web.whatsapp.com/*",
+        "*://*.outlook.live.com/*",
+        "*://*.outlook.office.com/*",
+        "*://*/*"
+      ],
+      "js": ["content.js"],
+      "css": ["content.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "ScamShield Safety Status"
+  }
+}

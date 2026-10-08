@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ScamShield Safety Status</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { width: 320px; background: #F5F7FB; color: #172033; padding: 16px; }
+    .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+    .brand { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 15px; }
+    .shield-icon { background: #0F766E; color: white; width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+    .status-badge { font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 999px; background: #DCFCE7; color: #166534; border: 1px solid #BBF7D0; }
+    .card { background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 12px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    .stat-row { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 6px; }
+    .stat-val { font-weight: 700; color: #0F766E; }
+    .input-box { width: 100%; padding: 8px 10px; font-size: 12px; border: 1px solid #CBD5E1; border-radius: 8px; margin-bottom: 8px; }
+    .btn { width: 100%; padding: 8px; font-size: 12px; font-weight: 600; border-radius: 8px; border: none; cursor: pointer; transition: 0.15s; }
+    .btn-primary { background: #0F766E; color: white; }
+    .btn-primary:hover { background: #0D5E58; }
+    .result { font-size: 11px; padding: 8px; border-radius: 8px; margin-top: 8px; display: none; }
+    .result.danger { background: #FEE2E2; color: #991B1B; border: 1px solid #FCA5A5; }
+    .result.safe { background: #DCFCE7; color: #166534; border: 1px solid #BBF7D0; }
+    .footer { text-align: center; font-size: 10px; color: #64748B; margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="brand">
+      <div class="shield-icon">🛡️</div>
+      <span>Scam<span style="color:#0F766E">Shield</span></span>
+    </div>
+    <span class="status-badge" id="protectionBadge">🟢 Active</span>
+  </div>
+
+  <div class="card">
+    <div class="stat-row">
+      <span style="color:#64748B">Web Links Checked</span>
+      <span class="stat-val" id="checkedCount">42</span>
+    </div>
+    <div class="stat-row">
+      <span style="color:#64748B">Phishing Blocked</span>
+      <span class="stat-val" style="color:#DC2626" id="blockedCount">3</span>
+    </div>
+    <div class="stat-row">
+      <span style="color:#64748B">Engine Mode</span>
+      <span style="font-weight:600;font-size:11px;color:#0F766E">Heuristic + AI</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div style="font-size:11px;font-weight:700;margin-bottom:6px;color:#334155">QUICK LINK INSPECTION</div>
+    <input type="text" id="urlInput" class="input-box" placeholder="Paste URL to inspect...">
+    <button class="btn btn-primary" id="checkBtn">Inspect Destination</button>
+    <div class="result" id="resultBox"></div>
+  </div>
+
+  <div class="footer">
+    ScamShield AI Proactive Agent • v2.0
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

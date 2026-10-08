@@ -21,7 +21,8 @@ from .api import (
     history_router,
     sources_router,
     settings_router,
-    gmail_router
+    gmail_router,
+    community_router
 )
 
 @asynccontextmanager
@@ -62,6 +63,7 @@ app.include_router(history_router)
 app.include_router(sources_router)
 app.include_router(settings_router)
 app.include_router(gmail_router)
+app.include_router(community_router)
 
 @app.websocket("/ws")
 async def websocket_endpoint(

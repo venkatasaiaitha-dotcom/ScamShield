@@ -14,9 +14,11 @@ import {
   Server,
   Activity,
   Lock,
-  RefreshCw
+  RefreshCw,
+  Radio
 } from 'lucide-react';
 import { api } from '../services/api';
+import CommunityRadarCard from '../components/CommunityRadarCard';
 
 export default function SafetyView() {
   const [activeTab, setActiveTab] = useState('tips'); // 'tips', 'compare', 'security'
@@ -145,6 +147,16 @@ export default function SafetyView() {
             Safety Guidelines
           </button>
           <button
+            onClick={() => setActiveTab('radar')}
+            className={`px-3 py-1.5 rounded-lg font-semibold transition-all cursor-pointer ${
+              activeTab === 'radar'
+                ? 'bg-white text-teal-800 shadow-xs border border-slate-200'
+                : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            📡 Community Radar
+          </button>
+          <button
             onClick={() => setActiveTab('compare')}
             className={`px-3 py-1.5 rounded-lg font-semibold transition-all cursor-pointer ${
               activeTab === 'compare'
@@ -166,6 +178,9 @@ export default function SafetyView() {
           </button>
         </div>
       </div>
+
+      {/* Community Threat Radar Tab */}
+      {activeTab === 'radar' && <CommunityRadarCard />}
 
       {/* Safety Tips Tab */}
       {activeTab === 'tips' && (

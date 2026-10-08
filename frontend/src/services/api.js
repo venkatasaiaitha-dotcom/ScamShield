@@ -749,6 +749,121 @@ export const api = {
       return { message: 'All local demo data cleared' };
     }
   },
+
+  // Visual Image & QR / Quishing Inspector
+  async analyzeImage(imageB64 = null, extractedText = null, qrPayload = null) {
+    try {
+      return await request(`${API_BASE}/analyze/image`, {
+        method: 'POST',
+        body: JSON.stringify({
+          image_b64: imageB64,
+          extracted_text: extractedText,
+          qr_payload: qrPayload,
+        }),
+      });
+    } catch {
+      // In-browser fallback for image & QR analysis
+      const combined = `${extractedText || ''}\n${qrPayload || ''}`.trim() || 'QR Code or Visual Payload';
+      const res = clientAnalyzeMessage(combined, 'QR Code / Image Inspection', 'VISUAL');
+      const isQuishing = Boolean(qrPayload || res.urls_detected?.length > 0);
+      if (isQuishing) {
+        res.category = 'QUISHING_QR_PHISHING';
+        res.is_quishing = true;
+        res.qr_payload = qrPayload || (res.urls_detected ? res.urls_detected[0] : null);
+        res.risk_score = Math.max(res.risk_score, 88);
+        res.risk_level = 'HIGH';
+        res.reasons.unshift({
+          title: 'Quishing Threat (QR Code Phishing)',
+          description: 'Malicious redirection link embedded inside a QR code, bypassing text spam filters.',
+          severity: 'HIGH',
+        });
+      }
+      return res;
+    }
+  },
+
+  // Community Threat Radar
+  async getCommunityFeed(limit = 30) {
+    try {
+      return await request(`${API_BASE}/community/feed?limit=${limit}`);
+    } catch {
+      const stored = localStorage.getItem('scamshield_community_reports');
+      if (stored) {
+        return JSON.parse(stored);
+      }
+      return [
+        {
+          id: 'rep-sbi-01',
+          threat_title: 'SBI NetBanking Block Threat (Fake KYC)',
+          sender: 'SBI-ALERT',
+          category: 'FAKE_KYC_PHISHING',
+          risk_score: 94,
+          risk_level: 'HIGH',
+          indicators: ['Deceptive domain .xyz', 'Artificial 24h deadline', 'Requests login credentials'],
+          reported_at: 'Today, 10:15 AM',
+          upvotes: 48,
+        },
+        {
+          id: 'rep-elec-02',
+          threat_title: 'Urgent Electricity Disconnection Notice',
+          sender: '+91-98451-22910',
+          category: 'UTILITY_IMPERSONATION',
+          risk_score: 89,
+          risk_level: 'HIGH',
+          indicators: ['Urgent threat to cut power at 9:30 PM', 'Unverified personal phone number', 'Requests APK download'],
+          reported_at: 'Today, 11:40 AM',
+          upvotes: 35,
+        },
+        {
+          id: 'rep-job-03',
+          threat_title: 'YouTube Video Like Daily Income Task',
+          sender: 'TELEGRAM-HR',
+          category: 'TASK_ADVANCE_FEE',
+          risk_score: 82,
+          risk_level: 'HIGH',
+          indicators: ['Promises ₹5,000/day for liking videos', 'Requests ₹1,000 security deposit', 'Operates via anonymous channels'],
+          reported_at: 'Yesterday',
+          upvotes: 29,
+        },
+      ];
+    }
+  },
+
+  async reportToCommunity(reportData) {
+    try {
+      return await request(`${API_BASE}/community/report`, {
+        method: 'POST',
+        body: JSON.stringify(reportData),
+      });
+    } catch {
+      const stored = JSON.parse(localStorage.getItem('scamshield_community_reports') || '[]');
+      const newRep = {
+        id: `rep-${Math.random().toString(36).substring(2, 8)}`,
+        threat_title: reportData.threat_title || 'Suspicious Scam Pattern',
+        sender: reportData.sender || 'Unknown',
+        category: reportData.category || 'SCAM',
+        risk_score: reportData.risk_score || 85,
+        risk_level: reportData.risk_level || 'HIGH',
+        indicators: reportData.indicators || ['Reported by verified user'],
+        reported_at: 'Just now',
+        upvotes: 1,
+      };
+      localStorage.setItem('scamshield_community_reports', JSON.stringify([newRep, ...stored]));
+      return { status: 'success', message: 'Report submitted to community', report_id: newRep.id };
+    }
+  },
+
+  async upvoteCommunityReport(reportId) {
+    try {
+      return await request(`${API_BASE}/community/${reportId}/upvote`, { method: 'POST' });
+    } catch {
+      const stored = JSON.parse(localStorage.getItem('scamshield_community_reports') || '[]');
+      const updated = stored.map((r) => (r.id === reportId ? { ...r, upvotes: r.upvotes + 1 } : r));
+      localStorage.setItem('scamshield_community_reports', JSON.stringify(updated));
+      const target = updated.find((r) => r.id === reportId);
+      return { status: 'success', report_id: reportId, upvotes: target ? target.upvotes : 2 };
+    }
+  },
 };
 
 // WebSocket Client for Real-Time Threat Detection with Auth Token

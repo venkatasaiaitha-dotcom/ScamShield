@@ -6,6 +6,7 @@ from ..models.schemas import IncomingMessage, MessageAnalysis, URLAnalysisResult
 from ..agents.scamshield_agent import scamshield_agent
 from ..connectors.demo_connector import DEMO_SCENARIOS
 from ..services.url_analyzer import URLAnalyzer
+from ..services.image_analyzer import ImageAnalyzer
 from ..ml.classifier import classifier
 from ..security.deps import get_current_user, verify_webhook_auth
 from ..security.rate_limiter import rate_limit
@@ -23,6 +24,11 @@ class URLCheckRequest(BaseModel):
 class MessageCheckRequest(BaseModel):
     content: str = Field(..., min_length=1, max_length=100000)
     sender: Optional[str] = Field("Manual Inspection", max_length=320)
+
+class ImageCheckRequest(BaseModel):
+    image_b64: Optional[str] = Field(None, max_length=5000000)
+    extracted_text: Optional[str] = Field(None, max_length=50000)
+    qr_payload: Optional[str] = Field(None, max_length=5000)
 
 @router.get("/messages/scenarios")
 async def list_scenarios():
@@ -97,6 +103,25 @@ async def analyze_url_direct(
     if not clean_url:
         raise HTTPException(status_code=400, detail="URL cannot be empty.")
     res = URLAnalyzer.analyze_url(clean_url)
+    return res
+
+@router.post(
+    "/analyze/image",
+    dependencies=[Depends(rate_limit(max_requests=25, window_seconds=60, group="analyze_img"))]
+)
+async def analyze_image_direct(
+    req: ImageCheckRequest,
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Visual and QR Code / Quishing threat inspection endpoint.
+    Detects QR phishing links, payment redirects, and image-based text lures.
+    """
+    res = ImageAnalyzer.analyze_qr_or_image(
+        image_data_b64=req.image_b64,
+        extracted_text=req.extracted_text,
+        qr_payload=req.qr_payload
+    )
     return res
 
 @router.post(
