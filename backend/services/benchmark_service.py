@@ -284,6 +284,58 @@ BENCHMARK_DATASET: List[Dict[str, Any]] = [
         "expected_is_scam": False,
         "expected_category": "NORMAL",
         "threat_vector": "Legitimate Food Delivery Tracker"
+    },
+
+    # 12. ADVERSARIAL & EVASIVE SCAMS (Stage-1 Low-Signal Attacks - Realistic Industry False Negatives)
+    {
+        "id": "ADV-RECON-01",
+        "sender": "CEO-Office",
+        "content": "Hi, are you currently at your desk? I need you to handle a quick urgent task for me before I board my flight.",
+        "expected_is_scam": True,
+        "expected_category": "IMPERSONATION",
+        "threat_vector": "Stage-1 Executive Impersonation Recon"
+    },
+    {
+        "id": "ADV-EVASIVE-02",
+        "sender": "HR-Global",
+        "content": "Hello! I reviewed your profile and our executive team would love to schedule a preliminary conversation regarding an open senior position. Let me know if you are open to opportunities.",
+        "expected_is_scam": True,
+        "expected_category": "JOB_SCAM",
+        "threat_vector": "Stage-1 Job Scam Trust Building"
+    },
+    {
+        "id": "ADV-CALLBACK-03",
+        "sender": "Billing-Desk",
+        "content": "Thank you for contacting customer service. If you did not authorize renewal of your premium membership, please call our 24/7 help desk at 1-800-555-0199.",
+        "expected_is_scam": True,
+        "expected_category": "TECH_SUPPORT",
+        "threat_vector": "Vishing Callback Scam"
+    },
+    {
+        "id": "ADV-SMISHING-04",
+        "sender": "Unknown-9821",
+        "content": "Hey, sorry I missed your call earlier today. Was this regarding the property listing or the car maintenance?",
+        "expected_is_scam": True,
+        "expected_category": "PHISHING",
+        "threat_vector": "Wrong-Number Conversational Smish"
+    },
+
+    # 13. AMBIGUOUS BENIGN EDGE CASES (High-Urgency Legitimate Communications - Realistic Industry False Positives)
+    {
+        "id": "AMB-MARKETING-01",
+        "sender": "BajajFinance-Partner",
+        "content": "Congratulations! Your pre-approved personal loan of Rs 5,00,000 is ready for instant disbursal. Offer expires in 2 hours. Claim now: https://bajajfinserv.in/pre-approved-offers",
+        "expected_is_scam": False,
+        "expected_category": "NORMAL",
+        "threat_vector": "Aggressive Bank Affiliate Marketing"
+    },
+    {
+        "id": "AMB-URGENT-02",
+        "sender": "IT-SupportDesk",
+        "content": "URGENT SECURITY NOTICE: Your enterprise VPN certificate expires in 6 hours. Failure to renew will suspend remote access immediately. Visit IT portal: https://portal.internal-enterprise.com/vpn-renew",
+        "expected_is_scam": False,
+        "expected_category": "NORMAL",
+        "threat_vector": "Urgent Enterprise IT Certificate Notice"
     }
 ]
 
