@@ -18,7 +18,8 @@ class UPIGuard:
     SUSPICIOUS_VPA_KEYWORDS = {
         'refund', 'cashback', 'bonus', 'reward', 'kyc', 'verification',
         'lottery', 'winner', 'fastpay', 'helpline', 'customercare', 'official',
-        'support', 'desk', 'urgent', 'instant'
+        'support', 'desk', 'urgent', 'instant', 'invest', 'crypto', 'taskpay',
+        'refundscam', 'deposit', 'vip'
     }
 
     ENTITY_VPA_PATTERNS = {

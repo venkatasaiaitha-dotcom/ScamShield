@@ -1,0 +1,595 @@
+{
+  "total_samples": 31,
+  "scam_samples": 23,
+  "benign_samples": 8,
+  "confusion_matrix": {
+    "true_positives": 23,
+    "true_negatives": 8,
+    "false_positives": 0,
+    "false_negatives": 0
+  },
+  "metrics": {
+    "accuracy_pct": 100.0,
+    "precision_pct": 100.0,
+    "recall_pct": 100.0,
+    "specificity_pct": 100.0,
+    "f1_score_pct": 100.0,
+    "false_positive_rate_pct": 0.0,
+    "false_negative_rate_pct": 0.0
+  },
+  "performance": {
+    "mean_latency_ms": 13.75,
+    "min_latency_ms": 10.95,
+    "max_latency_ms": 24.44,
+    "p95_latency_ms": 18.68,
+    "throughput_msg_per_sec": 72.7
+  },
+  "telemetry_coverage": {
+    "scam_dna_generation_rate_pct": 100.0,
+    "attack_chain_correlation_rate_pct": 100.0,
+    "next_move_forecast_rate_pct": 100.0,
+    "upi_guard_rate_pct": 100.0,
+    "multilingual_detection_rate_pct": 100.0
+  },
+  "category_accuracy": {
+    "Credential Harvesting / Fake KYC": {
+      "accuracy_pct": 100.0,
+      "samples": 3
+    },
+    "Financial Institution Impersonation": {
+      "accuracy_pct": 100.0,
+      "samples": 2
+    },
+    "UPI Payment Trap / Utility Impersonation": {
+      "accuracy_pct": 100.0,
+      "samples": 1
+    },
+    "WhatsApp Family Emergency Impersonation": {
+      "accuracy_pct": 100.0,
+      "samples": 1
+    },
+    "UPI Deceptive Collect Scam": {
+      "accuracy_pct": 100.0,
+      "samples": 1
+    },
+    "Advance Fee / Task Fraud": {
+      "accuracy_pct": 100.0,
+      "samples": 3
+    },
+    "Lottery / Prize Bait": {
+      "accuracy_pct": 100.0,
+      "samples": 2
+    },
+    "Package / Courier Redirection": {
+      "accuracy_pct": 100.0,
+      "samples": 2
+    },
+    "High-Yield Investment / Crypto Scheme": {
+      "accuracy_pct": 100.0,
+      "samples": 1
+    },
+    "High-Yield Investment Scheme": {
+      "accuracy_pct": 100.0,
+      "samples": 1
+    },
+    "Account Deactivation Scare": {
+      "accuracy_pct": 100.0,
+      "samples": 2
+    },
+    "Hinglish Code-Mixed Fake KYC": {
+      "accuracy_pct": 100.0,
+      "samples": 1
+    },
+    "Hinglish Code-Mixed Utility Disconnection": {
+      "accuracy_pct": 100.0,
+      "samples": 1
+    },
+    "Tenglish Code-Mixed Fake KYC": {
+      "accuracy_pct": 100.0,
+      "samples": 1
+    },
+    "Tenglish Code-Mixed Utility Disconnection": {
+      "accuracy_pct": 100.0,
+      "samples": 1
+    },
+    "Legitimate Bank Debit Alert": {
+      "accuracy_pct": 100.0,
+      "samples": 1
+    },
+    "Legitimate Authentication OTP": {
+      "accuracy_pct": 100.0,
+      "samples": 1
+    },
+    "Legitimate Package Delivered Notice": {
+      "accuracy_pct": 100.0,
+      "samples": 1
+    },
+    "Legitimate Flight Boarding Notice": {
+      "accuracy_pct": 100.0,
+      "samples": 1
+    },
+    "Legitimate Academic Notice": {
+      "accuracy_pct": 100.0,
+      "samples": 1
+    },
+    "Legitimate P2P Informal UPI Share": {
+      "accuracy_pct": 100.0,
+      "samples": 1
+    },
+    "Legitimate Healthcare Appointment": {
+      "accuracy_pct": 100.0,
+      "samples": 1
+    },
+    "Legitimate Food Delivery Tracker": {
+      "accuracy_pct": 100.0,
+      "samples": 1
+    }
+  },
+  "detailed_results": [
+    {
+      "id": "SCAM-KYC-01",
+      "threat_vector": "Credential Harvesting / Fake KYC",
+      "actual_is_scam": true,
+      "predicted_is_scam": true,
+      "predicted_risk_level": "HIGH",
+      "predicted_score": 98,
+      "predicted_category": "FAKE_KYC",
+      "latency_ms": 24.44,
+      "confusion": "TP",
+      "scam_dna_hash": "DNA-BAN-FAK-HOM-4DC635",
+      "kill_chain_stage": "Credential Theft",
+      "upi_verdict": "NO_PAYMENT_DETECTED",
+      "is_code_mixed": false
+    },
+    {
+      "id": "SCAM-KYC-02",
+      "threat_vector": "Credential Harvesting / Fake KYC",
+      "actual_is_scam": true,
+      "predicted_is_scam": true,
+      "predicted_risk_level": "HIGH",
+      "predicted_score": 70,
+      "predicted_category": "BANK_IMPERSONATION",
+      "latency_ms": 18.68,
+      "confusion": "TP",
+      "scam_dna_hash": "DNA-BAN-BAN-HOM-E50058",
+      "kill_chain_stage": "Credential Theft",
+      "upi_verdict": "NO_PAYMENT_DETECTED",
+      "is_code_mixed": false
+    },
+    {
+      "id": "SCAM-KYC-03",
+      "threat_vector": "Credential Harvesting / Fake KYC",
+      "actual_is_scam": true,
+      "predicted_is_scam": true,
+      "predicted_risk_level": "HIGH",
+      "predicted_score": 95,
+      "predicted_category": "FAKE_KYC",
+      "latency_ms": 14.19,
+      "confusion": "TP",
+      "scam_dna_hash": "DNA-BAN-FAK-RAW-9FC318",
+      "kill_chain_stage": "Credential Theft",
+      "upi_verdict": "NO_PAYMENT_DETECTED",
+      "is_code_mixed": false
+    },
+    {
+      "id": "SCAM-BNK-01",
+      "threat_vector": "Financial Institution Impersonation",
+      "actual_is_scam": true,
+      "predicted_is_scam": true,
+      "predicted_risk_level": "HIGH",
+      "predicted_score": 70,
+      "predicted_category": "BANK_IMPERSONATION",
+      "latency_ms": 15.55,
+      "confusion": "TP",
+      "scam_dna_hash": "DNA-BAN-BAN-HOM-E50058",
+      "kill_chain_stage": "Credential Theft",
+      "upi_verdict": "NO_PAYMENT_DETECTED",
+      "is_code_mixed": false
+    },
+    {
+      "id": "SCAM-BNK-02",
+      "threat_vector": "Financial Institution Impersonation",
+      "actual_is_scam": true,
+      "predicted_is_scam": true,
+      "predicted_risk_level": "HIGH",
+      "predicted_score": 75,
+      "predicted_category": "BANK_IMPERSONATION",
+      "latency_ms": 10.95,
+      "confusion": "TP",
+      "scam_dna_hash": "DNA-BAN-BAN-PHI-64850E",
+      "kill_chain_stage": "Credential Theft",
+      "upi_verdict": "NO_PAYMENT_DETECTED",
+      "is_code_mixed": false
+    },
+    {
+      "id": "SCAM-UPI-01",
+      "threat_vector": "UPI Payment Trap / Utility Impersonation",
+      "actual_is_scam": true,
+      "predicted_is_scam": true,
+      "predicted_risk_level": "SUSPICIOUS",
+      "predicted_score": 47,
+      "predicted_category": "UPI_FRAUD",
+      "latency_ms": 14.29,
+      "confusion": "TP",
+      "scam_dna_hash": "DNA-ELE-UPI-UPI-EE0951",
+      "kill_chain_stage": "Payment Attempt",
+      "upi_verdict": "HIGH_RISK_DO_NOT_PAY",
+      "is_code_mixed": false
+    },
+    {
+      "id": "SCAM-UPI-02",
+      "threat_vector": "WhatsApp Family Emergency Impersonation",
+      "actual_is_scam": true,
+      "predicted_is_scam": true,
+      "predicted_risk_level": "SUSPICIOUS",
+      "predicted_score": 60,
+      "predicted_category": "SUSPICIOUS_OTHER",
+      "latency_ms": 13.19,
+      "confusion": "TP",
+      "scam_dna_hash": "DNA-FAM-SUS-UPI-B496C4",
+      "kill_chain_stage": "Payment Attempt",
+      "upi_verdict": "SAFE",
+      "is_code_mixed": false
+    },
+    {
+      "id": "SCAM-UPI-03",
+      "threat_vector": "UPI Deceptive Collect Scam",
+      "actual_is_scam": true,
+      "predicted_is_scam": true,
+      "predicted_risk_level": "SUSPICIOUS",
+      "predicted_score": 47,
+      "predicted_category": "UPI_FRAUD",
+      "latency_ms": 12.4,
+      "confusion": "TP",
+      "scam_dna_hash": "DNA-HDF-UPI-UPI-E5D672",
+      "kill_chain_stage": "Payment Attempt",
+      "upi_verdict": "HIGH_RISK_DO_NOT_PAY",
+      "is_code_mixed": false
+    },
+    {
+      "id": "SCAM-JOB-01",
+      "threat_vector": "Advance Fee / Task Fraud",
+      "actual_is_scam": true,
+      "predicted_is_scam": true,
+      "predicted_risk_level": "SUSPICIOUS",
+      "predicted_score": 60,
+      "predicted_category": "JOB_SCAM",
+      "latency_ms": 12.34,
+      "confusion": "TP",
+      "scam_dna_hash": "DNA-GEN-JOB-OBF-ADE247",
+      "kill_chain_stage": "Credential Theft",
+      "upi_verdict": "NO_PAYMENT_DETECTED",
+      "is_code_mixed": false
+    },
+    {
+      "id": "SCAM-JOB-02",
+      "threat_vector": "Advance Fee / Task Fraud",
+      "actual_is_scam": true,
+      "predicted_is_scam": true,
+      "predicted_risk_level": "SUSPICIOUS",
+      "predicted_score": 45,
+      "predicted_category": "JOB_SCAM",
+      "latency_ms": 13.29,
+      "confusion": "TP",
+      "scam_dna_hash": "DNA-GEN-JOB-UPI-EB05ED",
+      "kill_chain_stage": "Payment Attempt",
+      "upi_verdict": "VERIFY_BEFORE_PAYING",
+      "is_code_mixed": false
+    },
+    {
+      "id": "SCAM-JOB-03",
+      "threat_vector": "Advance Fee / Task Fraud",
+      "actual_is_scam": true,
+      "predicted_is_scam": true,
+      "predicted_risk_level": "HIGH",
+      "predicted_score": 98,
+      "predicted_category": "JOB_SCAM",
+      "latency_ms": 14.17,
+      "confusion": "TP",
+      "scam_dna_hash": "DNA-E-C-JOB-HOM-E22D8E",
+      "kill_chain_stage": "Credential Theft",
+      "upi_verdict": "NO_PAYMENT_DETECTED",
+      "is_code_mixed": false
+    },
+    {
+      "id": "SCAM-LOT-01",
+      "threat_vector": "Lottery / Prize Bait",
+      "actual_is_scam": true,
+      "predicted_is_scam": true,
+      "predicted_risk_level": "HIGH",
+      "predicted_score": 80,
+      "predicted_category": "LOTTERY_PRIZE",
+      "latency_ms": 12.36,
+      "confusion": "TP",
+      "scam_dna_hash": "DNA-GEN-LOT-RAW-DDA63E",
+      "kill_chain_stage": "Credential Theft",
+      "upi_verdict": "NO_PAYMENT_DETECTED",
+      "is_code_mixed": false
+    },
+    {
+      "id": "SCAM-LOT-02",
+      "threat_vector": "Lottery / Prize Bait",
+      "actual_is_scam": true,
+      "predicted_is_scam": true,
+      "predicted_risk_level": "SUSPICIOUS",
+      "predicted_score": 30,
+      "predicted_category": "LOTTERY_PRIZE",
+      "latency_ms": 12.18,
+      "confusion": "TP",
+      "scam_dna_hash": "DNA-WHA-LOT-TEX-16A74B",
+      "kill_chain_stage": "Initial Contact",
+      "upi_verdict": "NO_PAYMENT_DETECTED",
+      "is_code_mixed": false
+    },
+    {
+      "id": "SCAM-DEL-01",
+      "threat_vector": "Package / Courier Redirection",
+      "actual_is_scam": true,
+      "predicted_is_scam": true,
+      "predicted_risk_level": "HIGH",
+      "predicted_score": 70,
+      "predicted_category": "DELIVERY_SCAM",
+      "latency_ms": 12.39,
+      "confusion": "TP",
+      "scam_dna_hash": "DNA-GOV-DEL-PHI-9D8B25",
+      "kill_chain_stage": "Credential Theft",
+      "upi_verdict": "NO_PAYMENT_DETECTED",
+      "is_code_mixed": false
+    },
+    {
+      "id": "SCAM-DEL-02",
+      "threat_vector": "Package / Courier Redirection",
+      "actual_is_scam": true,
+      "predicted_is_scam": true,
+      "predicted_risk_level": "HIGH",
+      "predicted_score": 70,
+      "predicted_category": "DELIVERY_SCAM",
+      "latency_ms": 15.11,
+      "confusion": "TP",
+      "scam_dna_hash": "DNA-E-C-DEL-PHI-868277",
+      "kill_chain_stage": "Credential Theft",
+      "upi_verdict": "NO_PAYMENT_DETECTED",
+      "is_code_mixed": false
+    },
+    {
+      "id": "SCAM-INV-01",
+      "threat_vector": "High-Yield Investment / Crypto Scheme",
+      "actual_is_scam": true,
+      "predicted_is_scam": true,
+      "predicted_risk_level": "SUSPICIOUS",
+      "predicted_score": 65,
+      "predicted_category": "JOB_SCAM",
+      "latency_ms": 13.9,
+      "confusion": "TP",
+      "scam_dna_hash": "DNA-GEN-JOB-PHI-C1D879",
+      "kill_chain_stage": "Credential Theft",
+      "upi_verdict": "NO_PAYMENT_DETECTED",
+      "is_code_mixed": false
+    },
+    {
+      "id": "SCAM-INV-02",
+      "threat_vector": "High-Yield Investment Scheme",
+      "actual_is_scam": true,
+      "predicted_is_scam": true,
+      "predicted_risk_level": "SUSPICIOUS",
+      "predicted_score": 45,
+      "predicted_category": "SUSPICIOUS_OTHER",
+      "latency_ms": 12.53,
+      "confusion": "TP",
+      "scam_dna_hash": "DNA-GEN-SUS-UPI-D8904E",
+      "kill_chain_stage": "Payment Attempt",
+      "upi_verdict": "VERIFY_BEFORE_PAYING",
+      "is_code_mixed": false
+    },
+    {
+      "id": "SCAM-ACC-01",
+      "threat_vector": "Account Deactivation Scare",
+      "actual_is_scam": true,
+      "predicted_is_scam": true,
+      "predicted_risk_level": "SUSPICIOUS",
+      "predicted_score": 50,
+      "predicted_category": "PHISHING",
+      "latency_ms": 13.3,
+      "confusion": "TP",
+      "scam_dna_hash": "DNA-WHA-PHI-PHI-425CAD",
+      "kill_chain_stage": "Credential Theft",
+      "upi_verdict": "NO_PAYMENT_DETECTED",
+      "is_code_mixed": false
+    },
+    {
+      "id": "SCAM-ACC-02",
+      "threat_vector": "Account Deactivation Scare",
+      "actual_is_scam": true,
+      "predicted_is_scam": true,
+      "predicted_risk_level": "HIGH",
+      "predicted_score": 70,
+      "predicted_category": "ACCOUNT_SUSPENSION",
+      "latency_ms": 12.19,
+      "confusion": "TP",
+      "scam_dna_hash": "DNA-TEC-ACC-HOM-82F741",
+      "kill_chain_stage": "Credential Theft",
+      "upi_verdict": "NO_PAYMENT_DETECTED",
+      "is_code_mixed": false
+    },
+    {
+      "id": "SCAM-HIN-01",
+      "threat_vector": "Hinglish Code-Mixed Fake KYC",
+      "actual_is_scam": true,
+      "predicted_is_scam": true,
+      "predicted_risk_level": "HIGH",
+      "predicted_score": 90,
+      "predicted_category": "BANK_IMPERSONATION",
+      "latency_ms": 13.49,
+      "confusion": "TP",
+      "scam_dna_hash": "DNA-BAN-BAN-HOM-E50058",
+      "kill_chain_stage": "Credential Theft",
+      "upi_verdict": "NO_PAYMENT_DETECTED",
+      "is_code_mixed": true
+    },
+    {
+      "id": "SCAM-HIN-02",
+      "threat_vector": "Hinglish Code-Mixed Utility Disconnection",
+      "actual_is_scam": true,
+      "predicted_is_scam": true,
+      "predicted_risk_level": "SUSPICIOUS",
+      "predicted_score": 62,
+      "predicted_category": "NORMAL",
+      "latency_ms": 12.19,
+      "confusion": "TP",
+      "scam_dna_hash": "DNA-ELE-NOR-UPI-D6E21D",
+      "kill_chain_stage": "Payment Attempt",
+      "upi_verdict": "VERIFY_BEFORE_PAYING",
+      "is_code_mixed": true
+    },
+    {
+      "id": "SCAM-TEL-01",
+      "threat_vector": "Tenglish Code-Mixed Fake KYC",
+      "actual_is_scam": true,
+      "predicted_is_scam": true,
+      "predicted_risk_level": "HIGH",
+      "predicted_score": 100,
+      "predicted_category": "BANK_IMPERSONATION",
+      "latency_ms": 13.97,
+      "confusion": "TP",
+      "scam_dna_hash": "DNA-BAN-BAN-HOM-E50058",
+      "kill_chain_stage": "Credential Theft",
+      "upi_verdict": "NO_PAYMENT_DETECTED",
+      "is_code_mixed": true
+    },
+    {
+      "id": "SCAM-TEL-02",
+      "threat_vector": "Tenglish Code-Mixed Utility Disconnection",
+      "actual_is_scam": true,
+      "predicted_is_scam": true,
+      "predicted_risk_level": "HIGH",
+      "predicted_score": 77,
+      "predicted_category": "UPI_FRAUD",
+      "latency_ms": 13.77,
+      "confusion": "TP",
+      "scam_dna_hash": "DNA-ELE-UPI-UPI-F4D460",
+      "kill_chain_stage": "Payment Attempt",
+      "upi_verdict": "HIGH_RISK_DO_NOT_PAY",
+      "is_code_mixed": true
+    },
+    {
+      "id": "BENIGN-01",
+      "threat_vector": "Legitimate Bank Debit Alert",
+      "actual_is_scam": false,
+      "predicted_is_scam": false,
+      "predicted_risk_level": "LOW",
+      "predicted_score": 5,
+      "predicted_category": "BANK_IMPERSONATION",
+      "latency_ms": 12.92,
+      "confusion": "TN",
+      "scam_dna_hash": "DNA-SBI-BAN-TEX-0F666D",
+      "kill_chain_stage": "Initial Contact",
+      "upi_verdict": "NO_PAYMENT_DETECTED",
+      "is_code_mixed": false
+    },
+    {
+      "id": "BENIGN-02",
+      "threat_vector": "Legitimate Authentication OTP",
+      "actual_is_scam": false,
+      "predicted_is_scam": false,
+      "predicted_risk_level": "LOW",
+      "predicted_score": 10,
+      "predicted_category": "NORMAL",
+      "latency_ms": 13.56,
+      "confusion": "TN",
+      "scam_dna_hash": "DNA-GEN-NOR-TEX-BA65F7",
+      "kill_chain_stage": "Payment Attempt",
+      "upi_verdict": "NO_PAYMENT_DETECTED",
+      "is_code_mixed": false
+    },
+    {
+      "id": "BENIGN-03",
+      "threat_vector": "Legitimate Package Delivered Notice",
+      "actual_is_scam": false,
+      "predicted_is_scam": false,
+      "predicted_risk_level": "LOW",
+      "predicted_score": 8,
+      "predicted_category": "NORMAL",
+      "latency_ms": 13.12,
+      "confusion": "TN",
+      "scam_dna_hash": "DNA-AMA-NOR-TEX-6C14B6",
+      "kill_chain_stage": "Trust Building",
+      "upi_verdict": "NO_PAYMENT_DETECTED",
+      "is_code_mixed": false
+    },
+    {
+      "id": "BENIGN-04",
+      "threat_vector": "Legitimate Flight Boarding Notice",
+      "actual_is_scam": false,
+      "predicted_is_scam": false,
+      "predicted_risk_level": "LOW",
+      "predicted_score": 8,
+      "predicted_category": "NORMAL",
+      "latency_ms": 12.62,
+      "confusion": "TN",
+      "scam_dna_hash": "DNA-GEN-NOR-TEX-BA65F7",
+      "kill_chain_stage": "Initial Contact",
+      "upi_verdict": "NO_PAYMENT_DETECTED",
+      "is_code_mixed": false
+    },
+    {
+      "id": "BENIGN-05",
+      "threat_vector": "Legitimate Academic Notice",
+      "actual_is_scam": false,
+      "predicted_is_scam": false,
+      "predicted_risk_level": "LOW",
+      "predicted_score": 12,
+      "predicted_category": "NORMAL",
+      "latency_ms": 11.5,
+      "confusion": "TN",
+      "scam_dna_hash": "DNA-GEN-NOR-TEX-BA65F7",
+      "kill_chain_stage": "Initial Contact",
+      "upi_verdict": "NO_PAYMENT_DETECTED",
+      "is_code_mixed": false
+    },
+    {
+      "id": "BENIGN-06",
+      "threat_vector": "Legitimate P2P Informal UPI Share",
+      "actual_is_scam": false,
+      "predicted_is_scam": false,
+      "predicted_risk_level": "LOW",
+      "predicted_score": 27,
+      "predicted_category": "NORMAL",
+      "latency_ms": 14.73,
+      "confusion": "TN",
+      "scam_dna_hash": "DNA-GEN-NOR-UPI-54F4C8",
+      "kill_chain_stage": "Payment Attempt",
+      "upi_verdict": "VERIFY_BEFORE_PAYING",
+      "is_code_mixed": false
+    },
+    {
+      "id": "BENIGN-07",
+      "threat_vector": "Legitimate Healthcare Appointment",
+      "actual_is_scam": false,
+      "predicted_is_scam": false,
+      "predicted_risk_level": "LOW",
+      "predicted_score": 12,
+      "predicted_category": "NORMAL",
+      "latency_ms": 12.9,
+      "confusion": "TN",
+      "scam_dna_hash": "DNA-GEN-NOR-TEX-BA65F7",
+      "kill_chain_stage": "Initial Contact",
+      "upi_verdict": "NO_PAYMENT_DETECTED",
+      "is_code_mixed": false
+    },
+    {
+      "id": "BENIGN-08",
+      "threat_vector": "Legitimate Food Delivery Tracker",
+      "actual_is_scam": false,
+      "predicted_is_scam": false,
+      "predicted_risk_level": "LOW",
+      "predicted_score": 12,
+      "predicted_category": "NORMAL",
+      "latency_ms": 14.05,
+      "confusion": "TN",
+      "scam_dna_hash": "DNA-GEN-NOR-TEX-BA65F7",
+      "kill_chain_stage": "Initial Contact",
+      "upi_verdict": "NO_PAYMENT_DETECTED",
+      "is_code_mixed": false
+    }
+  ]
+}

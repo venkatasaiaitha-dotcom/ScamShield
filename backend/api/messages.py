@@ -11,6 +11,7 @@ from ..ml.classifier import classifier
 from ..security.deps import get_current_user, verify_webhook_auth
 from ..security.rate_limiter import rate_limit
 from ..database import get_user_by_email, get_campaigns
+from ..services.benchmark_service import BenchmarkService
 from ..config import ADMIN_EMAIL
 
 router = APIRouter(prefix="/api", tags=["Messages & Analysis"])
@@ -92,6 +93,17 @@ async def list_expo_drills():
 async def list_scam_campaigns(limit: int = 20, current_user: dict = Depends(get_current_user)):
     """Returns active Scam DNA campaigns with variant counts and community immunity stats"""
     return get_campaigns(limit)
+
+@router.get("/benchmark/run")
+async def run_real_time_benchmark(current_user: dict = Depends(get_current_user)):
+    """Runs live real-time benchmark evaluation suite across all threat vectors and computes metrics"""
+    return BenchmarkService.run_benchmark()
+
+@router.get("/benchmark/dataset")
+async def get_benchmark_dataset(current_user: dict = Depends(get_current_user)):
+    """Returns ground-truth dataset corpus used for model training and benchmark verification"""
+    from ..services.benchmark_service import BENCHMARK_DATASET
+    return BENCHMARK_DATASET
 
 @router.post("/messages/incoming")
 async def receive_incoming_message(

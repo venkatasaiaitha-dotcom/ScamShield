@@ -14,9 +14,14 @@ THREATENING_PATTERNS = [
 ]
 
 FINANCIAL_BAIT_PATTERNS = [
-    r'\b(?:earn\s+[₹$€£]?\s*[\d,]+|daily\s+income|guaranteed\s+(?:return|profit|income)|double\s+your\s+money|work\s+from\s+home\s+and\s+earn)\b',
-    r'\b(?:won\s+(?:a\s+)?(?:cash\s+)?prize|lucky\s+draw|cashback\s+reward|congratulations\s+you\s+(?:have\s+)?won|lottery\s+winner)\b',
-    r'\b(?:pay\s+[₹$€£]?\s*[\d,]+\s*(?:registration|kit|activation|security|processing)\s+fee)\b'
+    r'\b(?:earn\s+(?:rs\.?|inr|[₹$€£])?\s*[\d,]+|daily\s+income|guaranteed\s+(?:return|returns|profit|income)|\d+%\s*(?:profit|returns?|daily)|double\s+your\s+money|work\s+from\s+home\s+and\s+earn)\b',
+    r'\b(?:won\s+(?:a\s+)?(?:cash\s+)?(?:prize|reward|amount)|lucky\s+draw|cashback\s+reward|congratulations\s+you\s+(?:have\s+)?won|lottery\s+winner|kbc\s+(?:jio\s+)?lucky\s+draw)\b',
+    r'\b(?:pay\s+(?:rs\.?|inr|[₹$€£])?\s*[\d,]+\s*(?:registration|kit|activation|security|processing|tax)\s*(?:fee|charge|tax)?)\b',
+    r'\b(?:transfer\s+(?:rs\.?|inr|[₹$€£])?\s*[\d,]+.*(?:registration|kit|activation|deposit|fee|to\s+join|vip))\b'
+]
+
+FAMILY_EMERGENCY_PATTERNS = [
+    r'\b(?:hi\s+mom|hi\s+mum|hello\s+mom|temporary\s+(?:whatsapp|number)|phone\s+fell\s+in\s+water|mic\s+broken|can\'?t\s+call)\b'
 ]
 
 CREDENTIAL_HARVESTING_PATTERNS = [
@@ -131,12 +136,23 @@ class MessageAnalyzer:
         # Step 5: Financial Bait / Advance Fee / Unrealistic Reward
         has_financial_bait = any(re.search(p, lower_content) for p in FINANCIAL_BAIT_PATTERNS)
         if has_financial_bait:
-            score += 25
+            score += 30
             technical_signals["financial_bait_detected"] = True
-            technical_signals["raw_score_components"]["financial_bait"] = 25
+            technical_signals["raw_score_components"]["financial_bait"] = 30
             reasons.append(AnalysisReason(
                 title="Financial Bait & Advance Fee",
                 description="Promises unrealistic daily earnings, lottery winnings, or requests an upfront registration fee.",
+                severity="HIGH"
+            ))
+
+        # Step 5b: Family / Emergency Impersonation
+        has_family_emergency = any(re.search(p, lower_content) for p in FAMILY_EMERGENCY_PATTERNS)
+        if has_family_emergency and any(w in lower_content for w in ["upi", "transfer", "pay", "fee", "money", "rupees", "rs", "exam"]):
+            score += 45
+            technical_signals["impersonation_target"] = "Family Relative (Hi Mom Scam)"
+            reasons.append(AnalysisReason(
+                title="WhatsApp Family Impersonation ('Hi Mum' Emergency Trap)",
+                description="Attacker pretends to be a close relative using a temporary number due to a broken phone, demanding urgent funds.",
                 severity="HIGH"
             ))
 
